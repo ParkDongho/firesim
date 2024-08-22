@@ -1,3 +1,4 @@
+# TODO: AJG: remove FIRESIM_STANDALONE
 import os
 from pathlib import Path
 import logging
