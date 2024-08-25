@@ -652,7 +652,7 @@ class RuntimeBuildRecipeConfig(RuntimeHWConfig):
             else:
                 # search for the file relative to the build config file path
                 bcf_parent_path = Path(build_recipes_config_file).absolute().parent
-                tpm_path: Path = bcf_parent_path / tpm_path
+                tpm_path: Path = bcf_parent_path / tpm_relpath
                 if tpm_path.exists():
                     self.deploy_makefrag = str(tpm_path.absolute())
                 else:
