@@ -1,8 +1,7 @@
 Welcome to FireSim's documentation (version "|version|")!
 ===========================================================
 
-New to FireSim? Jump to the :doc:`/FireSim-Basics` page for more info.
-
+FireSim을 처음 사용하시나요? 더 많은 정보를 원하시면 :doc:`/FireSim-Basics` 페이지로 이동하세요.
 
 .. toctree::
    :maxdepth: 3
@@ -67,3 +66,4 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+

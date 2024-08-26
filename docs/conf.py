@@ -285,7 +285,7 @@ def gh_file_ref_role(name, rawtext, text, lineno, inliner, options={}, content=[
 
     # Note GitHub permits referring to a tree as a 'blob' in these URLs without returning a 404.
     # So I've unconditionally chosen to use blob.
-    url = f"https://www.github.com/firesim/firesim/blob/{version}/{text}"
+    url = f"https://www.github.com/parkdongho/firesim/blob/{version}/{text}"
 
     logger.info(f"Testing GitHub URL {url} exists...")
     status_code = requests.get(url).status_code
