@@ -103,9 +103,9 @@ class BuildConfig:
             if tpm_relpath.exists():
                 self.TARGET_PROJECT_MAKEFRAG = str(tpm_relpath.absolute())
             else:
-                # search for the file relative to the build config file path
-                bcf_parent_path = Path(build_config_file.path).absolute().parent
-                tpm_path: Path = bcf_parent_path / tpm_relpath
+                # search for the file relative to the build config recipes file path
+                bcrf_parent_path = Path(build_config_file.build_config_recipes_file_path).absolute().parent
+                tpm_path: Path = bcrf_parent_path / tpm_relpath
                 if tpm_path.exists():
                     self.TARGET_PROJECT_MAKEFRAG = str(tpm_path.absolute())
                 else:
