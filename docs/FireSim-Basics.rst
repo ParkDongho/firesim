@@ -3,110 +3,71 @@
 FireSim Basics
 ===================================
 
-FireSim is an open-source
-FPGA-accelerated full-system hardware simulation platform that makes
-it easy to validate, profile, and debug RTL hardware implementations
-at 10s to 100s of MHz. FireSim simplifies co-simulating
-ASIC RTL with cycle-accurate hardware and software models for other system components (e.g. I/Os). FireSim can productively
-scale from individual SoC simulations hosted on on-prem FPGAs (e.g., a single Xilinx Alveo board attached to a desktop)
-to massive datacenter-scale simulations harnessing hundreds of cloud FPGAs (e.g., on Amazon EC2 F1).
+FireSim은 10MHz에서 100MHz 이상의 속도로 RTL 하드웨어 구현을 검증, 프로파일링 및 디버깅하기 쉽게 만들어주는 오픈 소스 FPGA 가속 전체 시스템 하드웨어 시뮬레이션 플랫폼입니다. FireSim은 ASIC RTL을 다른 시스템 구성 요소(예: I/Os)의 사이클 정확한 하드웨어 및 소프트웨어 모델과 공동 시뮬레이션하는 과정을 단순화합니다. FireSim은 개별 SoC 시뮬레이션을 로컬 데스크톱에 연결된 단일 Xilinx Alveo 보드와 같은 온프레미스 FPGA에서 호스팅하는 것부터 수백 개의 클라우드 FPGA를 활용하는 대규모 데이터센터 수준의 시뮬레이션까지 생산적으로 확장할 수 있습니다(예: Amazon EC2 F1).
 
-FireSim users across academia and industry (at 20+ institutions) have published
-over 40 papers using FireSim in many areas, including computer architecture,
-systems, networking, security, scientific computing, circuits, design
-automation, and more (see the `Publications page <https://fires.im/publications>`__ on
-the FireSim website to learn more). FireSim
-has also been used in the development of commercially-available silicon. FireSim
-was originally developed in the Electrical Engineering and Computer Sciences
-Department at the University of California, Berkeley, but
-now has industrial and academic contributors from all over the world.
+전 세계 20개 이상의 학술 및 산업 기관에서 FireSim을 사용해 40편 이상의 논문을 발표했으며, 컴퓨터 아키텍처, 시스템, 네트워킹, 보안, 과학 컴퓨팅, 회로, 설계 자동화 등 다양한 분야에 사용되었습니다(FireSim 웹사이트의 `Publications page <https://fires.im/publications>`__ 참조). FireSim은 상업적으로 사용 가능한 실리콘 개발에도 활용되었습니다. FireSim은 원래 캘리포니아 대학교 버클리의 전기 공학 및 컴퓨터 과학부에서 개발되었으며, 현재는 전 세계 산업 및 학계 기여자들이 함께하고 있습니다.
 
-This documentation will walk you through getting started with using FireSim on
-your platform and also serves as a reference for more advanced FireSim features. For higher-level
-technical discussion about FireSim, see the `FireSim website <https://fires.im>`__.
+이 문서에서는 사용자가 FireSim을 플랫폼에서 사용하는 방법을 안내하고, 고급 FireSim 기능에 대한 참고 자료 역할을 합니다. FireSim에 대한 고급 기술 논의는 `FireSim website <https://fires.im>`__ 를 참조하세요.
 
 
 Common FireSim usage models
 ---------------------------------------
 
-Below are three common usage models for FireSim. The first two are the most common, while the
-third model is primarily for those interested in warehouse-scale computer research. The getting
-started guides on this documentation site will cover all three models.
+아래는 FireSim의 세 가지 일반적인 사용 모델입니다. 처음 두 가지가 가장 일반적이며, 세 번째 모델은 주로 대규모 컴퓨터 연구에 관심이 있는 사람들을 위한 것입니다. 이 문서 사이트의 시작 가이드에서는 세 가지 모델 모두를 다룹니다.
 
 1. Single-Node Simulations Using One or More On-Premises FPGAs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-In this usage model, FireSim allows for simulation of targets consisting of
-individual SoC designs (e.g., those produced by `Chipyard <https://chipyard.readthedocs.io/>`__)
-at 150+ MHz running on on-premises
-FPGAs, such as those attached to your local desktop, laptop, or cluster. Just
-like on the cloud, the FireSim manager can automatically distribute and manage
-jobs on one or more on-premises FPGAs, including running complex workloads like
-SPECInt2017 with full reference inputs.
+이 사용 모델에서 FireSim은 개별 SoC 설계(예: `Chipyard <https://chipyard.readthedocs.io/>`__ 에서 생성된 것)로 구성된 타겟을 온프레미스 FPGA(로컬 데스크톱, 노트북, 클러스터에 연결된 FPGA 등)에서 150MHz 이상의 속도로 시뮬레이션할 수 있도록 합니다. 클라우드와 마찬가지로 FireSim 매니저는 복잡한 워크로드(SPECInt2017의 전체 참조 입력 포함)를 실행하는 작업을 하나 이상의 온프레미스 FPGA에 자동으로 분배하고 관리할 수 있습니다.
 
 2. Single-Node Simulations Using Cloud FPGAs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-This usage model is similar to the previous on-premises case, but instead
-deploys simulations on FPGAs attached to cloud instances, rather than requiring
-users to obtain and set-up on-premises FPGAs. This allows for dynamically
-scaling the number of FPGAs in-use to match workload requirements. For example,
-on AWS EC2 F1, it is just as cost effective to run the 10 workloads in SPECInt2017 in parallel
-on 10 cloud FPGAs vs. running them serially on one cloud FPGA.
+이 사용 모델은 이전의 온프레미스 경우와 유사하지만, 사용자가 온프레미스 FPGA를 구입하고 설정할 필요 없이 클라우드 인스턴스에 연결된 FPGA에서 시뮬레이션을 배포합니다. 이를 통해 워크로드 요구 사항에 맞게 사용 중인 FPGA 수를 동적으로 확장할 수 있습니다. 예를 들어, AWS EC2 F1에서는 SPECInt2017의 10개 워크로드를 10개의 클라우드 FPGA에서 병렬로 실행하는 것이 하나의 클라우드 FPGA에서 순차적으로 실행하는 것과 비용 효율이 동일합니다.
 
 .. note::
-    All automation in FireSim works in both the on-premises and cloud
-    usage models, which enables a **hybrid usage model** where early development happens
-    on one (or a small cluster of) on-premises FPGA(s), while bursting to a large
-    number of cloud FPGAs when a high degree of parallelism is necessary.
+    FireSim의 모든 자동화는 온프레미스와 클라우드 사용 모델 모두에서 작동하므로 초기 개발은 하나(또는 소규모 클러스터)의 온프레미스 FPGA에서 수행하면서 높은 병렬 처리가 필요한 경우 클라우드 FPGA로 확장하는 **하이브리드 사용 모델** 을 사용할 수 있습니다.
 
 3. Datacenter/Cluster Simulations on On-Premises or Cloud FPGAs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-In this mode, FireSim also models a cycle-accurate network with
-parameterizeable bandwidth, link latency, and configurable
-topology to accurately model current and future datacenter-scale
-systems. For example, FireSim has been used to simulate 1024 quad-core
-RISC-V Rocket Chip-based nodes, interconnected by a 200 Gbps, 2us Ethernet network. To learn
-more about this use case, see our `ISCA 2018 paper
-<https://sagark.org/assets/pubs/firesim-isca2018.pdf>`__.
+이 모드에서 FireSim은 현재 및 미래의 데이터센터 규모 시스템을 정확하게 모델링하기 위해 파라미터화 가능한 대역폭, 링크 지연 시간, 구성 가능한 토폴로지를 갖춘 사이클 정확한 네트워크도 모델링합니다. 예를 들어, FireSim은 200Gbps, 2us 이더넷 네트워크로 상호 연결된 1024개의 쿼드 코어 RISC-V Rocket Chip 기반 노드를 시뮬레이션하는 데 사용되었습니다. 이 사용 사례에 대해 자세히 알아보려면 `ISCA 2018 paper <https://sagark.org/assets/pubs/firesim-isca2018.pdf>`__ 를 참조하세요.
 
 
 Other Use Cases
 ---------------------
 
-If you have other use-cases that we haven't covered or don't fit into the above
-buckets, feel free to contact us!
+다른 사용 사례가 있거나 위의 범주에 속하지 않는 경우 언제든지 저희에게 문의하세요!
 
 Choose your platform to get started
 --------------------------------------
 
-FireSim supports many types of FPGAs and FPGA platforms! Click one of the following links to work through the getting started guide for your particular platform.
+FireSim은 다양한 유형의 FPGA 및 FPGA 플랫폼을 지원합니다! 특정 플랫폼에 대한 시작 가이드를 보려면 아래 링크 중 하나를 클릭하세요.
 
 * :doc:`/Getting-Started-Guides/AWS-EC2-F1-Getting-Started/index`
 
-  * Status: ✅ All FireSim Features Supported.
+  * 상태: ✅ FireSim의 모든 기능이 지원됩니다.
 
 * :doc:`/Getting-Started-Guides/On-Premises-FPGA-Getting-Started/Xilinx-Alveo-U200-FPGAs`
 
-  * Status: ✅ All FireSim Features Supported.
+  * 상태: ✅ FireSim의 모든 기능이 지원됩니다.
 
 * :doc:`/Getting-Started-Guides/On-Premises-FPGA-Getting-Started/Xilinx-Alveo-U250-FPGAs`
 
-  * Status: ✅ All FireSim Features Supported.
+  * 상태: ✅ FireSim의 모든 기능이 지원됩니다.
 
 * :doc:`/Getting-Started-Guides/On-Premises-FPGA-Getting-Started/Xilinx-Alveo-U280-FPGAs`
 
-  * Status: ✅ All FireSim Features Supported.
+  * 상태: ✅ FireSim의 모든 기능이 지원됩니다.
 
 * :doc:`/Getting-Started-Guides/On-Premises-FPGA-Getting-Started/Xilinx-VCU118-FPGAs`
 
-  * Status: ✅ All FireSim Features Supported.
+  * 상태: ✅ FireSim의 모든 기능이 지원됩니다.
 
 * :doc:`/Getting-Started-Guides/On-Premises-FPGA-Getting-Started/RHS-Research-Nitefury-II-FPGAs`
 
-  * Status: ✅ All FireSim Features Supported.
+  * 상태: ✅ FireSim의 모든 기능이 지원됩니다.
 
 * :doc:`Getting-Started-Guides/On-Premises-FPGA-Getting-Started/Xilinx-Vitis-FPGAs`
 
-  * Status: ⚠️  DMA-based Bridges Not Supported. The Vitis-based U250 flow is **not recommended** unless you have specific constraints that require using Vitis. Notably, the Vitis-based flow does not support DMA-based FireSim bridges (e.g., TracerV, Synthesizable Printfs, etc.), while the XDMA-based flows support all FireSim features, as shown above. If you're unsure, use the XDMA-based U250 flow instead: :doc:`/Getting-Started-Guides/On-Premises-FPGA-Getting-Started/Xilinx-Alveo-U250-FPGAs`.
+  * 상태: ⚠️ DMA 기반 브릿지가 지원되지 않습니다. Vitis 기반 U250 흐름은 특정 제약 조건으로 인해 Vitis를 사용해야 하는 경우가 아니라면 **권장되지 않습니다**. 특히 Vitis 기반 흐름은 DMA 기반 FireSim 브릿지(예: TracerV, Synthesizable Printfs 등)를 지원하지 않으며, 위에 표시된 것처럼 XDMA 기반 흐름은 FireSim의 모든 기능을 지원합니다. 확신이 없다면 XDMA 기반 U250 흐름을 대신 사용하세요: :doc:`/Getting-Started-Guides/On-Premises-FPGA-Getting-Started/Xilinx-Alveo-U250-FPGAs`.

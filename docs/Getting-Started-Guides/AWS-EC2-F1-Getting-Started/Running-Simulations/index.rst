@@ -3,15 +3,13 @@
 Running FireSim Simulations
 ================================
 
-These guides will walk you through running two kinds of simulations:
+이 가이드는 두 가지 종류의 시뮬레이션 실행 방법을 안내합니다:
 
-- First, we will simulate a single-node, non-networked target, using a pre-generated
-  hardware image.
+- 첫 번째로, 사전 생성된 하드웨어 이미지를 사용하여 네트워크가 없는 단일 노드 타겟을 시뮬레이션합니다.
 
-- Then, we will simulate an eight-node, networked cluster target, also using
-  a pre-generated hardware image.
+- 그 다음으로, 역시 사전 생성된 하드웨어 이미지를 사용하여 네트워크가 연결된 8노드 클러스터 타겟을 시뮬레이션합니다.
 
-Hit next to get started!
+시작하려면 '다음'을 클릭하세요!
 
 .. toctree::
    :maxdepth: 2
@@ -19,4 +17,3 @@ Hit next to get started!
 
    Running-a-Single-Node-Simulation
    Running-a-Cluster-Simulation
-

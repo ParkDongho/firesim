@@ -3,24 +3,16 @@
 Running a Cluster Simulation
 ===============================
 
-Now, let's move on to simulating a cluster of eight nodes, interconnected
-by a network with one 8-port Top-of-Rack (ToR) switch and 200 Gbps, 2μs links.
-This will require one ``f1.16xlarge`` (8 FPGA) instance.
+이제 8개의 노드로 구성된 클러스터를 시뮬레이션해 보겠습니다. 이 클러스터는 하나의 8포트 Top-of-Rack(ToR) 스위치와 200 Gbps, 2μs 링크로 연결된 네트워크로 구성됩니다. 이를 위해 ``f1.16xlarge`` (8 FPGA) 인스턴스가 필요합니다.
 
-Make sure you are ``ssh`` or ``mosh``'d into your manager instance and have sourced
-``sourceme-manager.sh`` before running any of these commands.
+이 명령을 실행하기 전에 관리자 인스턴스에 ``ssh`` 또는 ``mosh`` 로 접속하여 ``sourceme-manager.sh`` 를 소스해야 합니다.
 
 Building target software
 ------------------------
 
-If you already built target software during the single-node getting started guide, you can
-skip to the next part (Setting up the manager configuration). If you haven't followed the single-node getting started guide,
-continue with this section.
+단일 노드 시작 가이드에서 타겟 소프트웨어를 이미 빌드한 경우, 다음 섹션(Setting up the manager configuration)으로 넘어가면 됩니다. 단일 노드 시작 가이드를 따르지 않았다면 이 섹션을 계속 진행하십시오.
 
-In these instructions, we'll assume that you want to boot the buildroot-based
-Linux distribution on each of the nodes in your simulated cluster. To do so,
-we'll need to build our FireSim-compatible RISC-V Linux distro. You can do
-this like so:
+이 설명에서는 시뮬레이션된 클러스터의 각 노드에서 buildroot 기반의 Linux 배포판을 부팅하고자 한다고 가정합니다. 이를 위해 FireSim과 호환되는 RISC-V Linux 배포판을 빌드해야 합니다. 다음과 같이 수행할 수 있습니다:
 
 .. code-block:: bash
 
@@ -29,84 +21,61 @@ this like so:
     ./marshal -v build br-base.json
     ./marshal -v install br-base.json
 
-This process will take about 10 to 15 minutes on a ``c5.4xlarge`` instance.
-Once this is completed, you'll have the following files:
+이 과정은 ``c5.4xlarge`` 인스턴스에서 약 10~15분 정도 소요됩니다. 완료되면 다음 파일들이 생성됩니다:
 
--  ``firesim/target-design/chipyard/software/firemarshal/images/firechip/br-base/br-base-bin`` - a bootloader + Linux
-   kernel image for the nodes we will simulate.
--  ``firesim/target-design/chipyard/software/firemarshal/images/firechip/br-base/br-base.img`` - a disk image for
-   each the nodes we will simulate
+-  ``firesim/target-design/chipyard/software/firemarshal/images/firechip/br-base/br-base-bin`` - 시뮬레이션할 노드용 부트로더 + Linux 커널 이미지.
+-  ``firesim/target-design/chipyard/software/firemarshal/images/firechip/br-base/br-base.img`` - 시뮬레이션할 각 노드용 디스크 이미지.
 
-These files will be used to form base images to either build more complicated
-workloads (see the :ref:`deprecated-defining-custom-workloads` section) or to copy around
-for deploying.
-
+이 파일들은 더 복잡한 작업 부하를 빌드하거나(:ref:`deprecated-defining-custom-workloads` 섹션 참조) 배포할 때 사용될 기본 이미지로 사용됩니다.
 
 Setting up the manager configuration
 -------------------------------------
 
-All runtime configuration options for the manager are set in a file called
-``firesim/deploy/config_runtime.yaml``. In this guide, we will explain only the
-parts of this file necessary for our purposes. You can find full descriptions of
-all of the parameters in the :ref:`manager-configuration-files` section.
+관리자의 모든 런타임 구성 옵션은 ``firesim/deploy/config_runtime.yaml`` 파일에서 설정됩니다. 이 가이드에서는 필요한 부분만 설명하겠습니다. 모든 매개변수에 대한 전체 설명은 :ref:`manager-configuration-files` 섹션에서 확인할 수 있습니다.
 
-If you open up this file, you will see the following default config (assuming
-you have not modified it):
+이 파일을 열면 기본 설정(수정하지 않았다고 가정)이 다음과 같다는 것을 알 수 있습니다:
 
 .. include:: DOCS_EXAMPLE_config_runtime.yaml
    :code: yaml
 
-For the 8-node cluster simulation, the defaults in this file are close to what
-we want but require slight modification. Let's outline the important parameters
-we need to change:
+8-노드 클러스터 시뮬레이션을 위해 이 파일의 기본값은 거의 적합하지만 약간의 수정이 필요합니다. 변경해야 하는 중요한 매개변수를 정리해 보겠습니다:
 
-* ``f1.16xlarges:``: Change this parameter to ``1``. This tells the manager that we want to launch one ``f1.16xlarge`` when we call the ``launchrunfarm`` command.
-* ``f1.2xlarges:``: Change this parameter to ``0``. This tells the manager to not launch any ``f1.2xlarge`` machines when we call the ``launchrunfarm`` command.
-* ``topology:``: Change this parameter to ``example_8config``. This tells the manager to use the topology named ``example_8config`` which is defined in ``deploy/runtools/user_topology.py``. This topology simulates an 8-node cluster with one ToR switch.
-* ``default_hw_config:`` Change this parameter to ``firesim_rocket_quadcore_nic_l2_llc4mb_ddr3``. This tells the manager that we want to simulate a quad-core Rocket Chip configuration with 512 KB of L2, 4 MB of L3 (LLC), 16 GB of DDR3, and a NIC, for each of the simulated nodes in the topology.
+* ``f1.16xlarges:``: 이 매개변수를 ``1``로 변경합니다. 이는 ``launchrunfarm`` 명령을 호출할 때 ``f1.16xlarge`` 인스턴스 하나를 시작하도록 관리자에게 지시합니다.
+* ``f1.2xlarges:``: 이 매개변수를 ``0``으로 변경합니다. 이는 ``launchrunfarm`` 명령을 호출할 때 ``f1.2xlarge`` 인스턴스를 시작하지 않도록 관리자에게 지시합니다.
+* ``topology:``: 이 매개변수를 ``example_8config`` 으로 변경합니다. 이는 ``deploy/runtools/user_topology.py`` 에 정의된 ``example_8config`` 이라는 이름의 토폴로지를 사용하도록 관리자에게 지시합니다. 이 토폴로지는 하나의 ToR 스위치와 8개의 노드로 구성된 클러스터를 시뮬레이션합니다.
+* ``default_hw_config:`` 이 매개변수를 ``firesim_rocket_quadcore_nic_l2_llc4mb_ddr3`` 로 변경합니다. 이는 관리자에게 우리가 시뮬레이션하는 토폴로지의 각 노드에 대해 512 KB의 L2, 4 MB의 L3(LLC), 16 GB의 DDR3 및 NIC을 가진 쿼드코어 Rocket Chip 구성을 시뮬레이션하도록 지시합니다.
 
 .. attention::
 
-    **[Advanced users] Simulating BOOM instead of Rocket Chip**: If you would like to simulate a single-core `BOOM <https://github.com/ucb-bar/riscv-boom>`__ as a target, set ``default_hw_config`` to ``firesim_boom_singlecore_nic_l2_llc4mb_ddr3``.
+    **[고급 사용자] Rocket Chip 대신 BOOM 시뮬레이션**: 단일 코어 `BOOM <https://github.com/ucb-bar/riscv-boom>`__을 대상으로 시뮬레이션하려면 ``default_hw_config`` 를 ``firesim_boom_singlecore_nic_l2_llc4mb_ddr3`` 로 설정하십시오.
 
-There are also some parameters that we won't need to change, but are worth highlighting:
+변경할 필요는 없지만 주목할 만한 매개변수도 있습니다:
 
-* ``link_latency: 6405``: This models a network with 6405 cycles of link latency. Since we are modeling processors running at 3.2 Ghz, 1 cycle = 1/3.2 ns, so 6405 cycles is roughly 2 microseconds.
-* ``switching_latency: 10``: This models switches with a minimum port-to-port latency of 10 cycles.
-* ``net_bandwidth: 200``: This sets the bandwidth of the NICs to 200 Gbit/s. Currently you can set any integer value less than this without making hardware modifications.
+* ``link_latency: 6405``: 이는 링크 지연이 6405 사이클인 네트워크를 모델링합니다. 우리는 3.2 Ghz에서 실행되는 프로세서를 모델링하고 있으므로, 1 사이클 = 1/3.2 ns이고, 따라서 6405 사이클은 대략 2마이크로초입니다.
+* ``switching_latency: 10``: 이는 포트 간 지연이 최소 10사이클인 스위치를 모델링합니다.
+* ``net_bandwidth: 200``: 이는 NIC의 대역폭을 200 Gbit/s로 설정합니다. 현재 하드웨어 수정을 하지 않고 이보다 낮은 정수 값으로 설정할 수 있습니다.
 
-You'll see other parameters here, like ``run_instance_market``,
-``spot_interruption_behavior``, and ``spot_max_price``. If you're an experienced
-AWS user, you can see what these do by looking at the
-:ref:`manager-configuration-files` section. Otherwise, don't change them.
+여기서 ``run_instance_market``, ``spot_interruption_behavior``, ``spot_max_price`` 와 같은 다른 매개변수들도 볼 수 있습니다. AWS에 익숙한 사용자라면 :ref:`manager-configuration-files` 섹션을 참고하여 이들이 무엇을 하는지 확인할 수 있습니다. 그렇지 않으면 변경하지 마십시오.
 
-As in the single-node getting started guide, we will leave the ``workload:`` mapping
-unchanged here, since we want to run the default buildroot-based Linux on our
-simulated system. The ``terminate_on_completion`` feature is an advanced feature
-that you can learn more about in the :ref:`manager-configuration-files`
-section.
-
+단일 노드 시작 가이드와 마찬가지로 여기서도 시뮬레이션된 시스템에서 기본 buildroot 기반 Linux를 실행하고자 하므로 ``workload:`` 매핑은 변경하지 않습니다. ``terminate_on_completion`` 기능은 고급 기능으로, :ref:`manager-configuration-files` 섹션에서 자세히 알아볼 수 있습니다.
 
 Launching a Simulation!
 -----------------------------
 
-Now that we've told the manager everything it needs to know in order to run
-our single-node simulation, let's actually launch an instance and run it!
+이제 관리자에게 단일 노드 시뮬레이션을 실행하기 위해 필요한 모든 정보를 제공했으니, 실제로 인스턴스를 시작하고 실행해 보겠습니다!
 
 Starting the Run Farm
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-First, we will tell the manager to launch our Run Farm, as we specified above.
-When you do this, you will start getting charged for the running EC2 instances
-(in addition to your manager).
+먼저, 관리자가 앞서 지정한 대로 Run Farm을 시작하도록 합니다. 이렇게 하면 실행 중인 EC2 인스턴스(관리자를 포함하여)에 대해 요금이 부과되기 시작합니다.
 
-To do launch your run farm, run:
+Run Farm을 시작하려면 다음 명령을 실행합니다:
 
 .. code-block:: bash
 
     firesim launchrunfarm
 
-You should expect output like the following:
+다음과 같은 출력을 예상할 수 있습니다:
 
 .. code-block:: bash
 
@@ -122,39 +91,25 @@ You should expect output like the following:
     The full log of this run is:
     /home/centos/firesim-new/deploy/logs/2018-05-19--06-05-53-launchrunfarm-ZGVP753DSU1Y9Q6R.log
 
-
-The output will rapidly progress to ``Waiting for instance boots: f1.16xlarges``
-and then take a minute or two while your ``f1.16xlarge`` instance launches.
-Once the launches complete, you should see the instance id printed and the instance
-will also be visible in your AWS EC2 Management console. The manager will tag
-the instances launched with this operation with the value you specified above
-as the ``run_farm_tag`` parameter from the ``config_runtime.yaml`` file, which we left
-set as ``mainrunfarm``. This value allows the manager to tell multiple Run Farms
-apart -- i.e., you can have multiple independent Run Farms running different
-workloads/hardware configurations in parallel. This is detailed in the
-:ref:`manager-configuration-files` and the :ref:`firesim-launchrunfarm`
-sections -- you do not need to be familiar with it here.
+출력이 ``Waiting for instance boots: f1.16xlarges`` 까지 빠르게 진행된 후, ``f1.16xlarge`` 인스턴스가 시작될 때까지 1~2분 정도 소요됩니다. 시작이 완료되면 인스턴스 ID가 출력되고, AWS EC2 관리 콘솔에서도 인스턴스를 볼 수 있습니다. 관리자는 ``config_runtime.yaml`` 파일에서 위에서 설정한 ``run_farm_tag`` 값을 사용하여 시작된 인스턴스에 태그를 지정합니다. 이 값은 관리자가 여러 Run Farm을 구별할 수 있도록 하며, 여러 독립적인 Run Farm이 서로 다른 작업 부하/하드웨어 구성으로 병렬로 실행될 수 있습니다. 이는 :ref:`manager-configuration-files` 및 :ref:`firesim-launchrunfarm` 섹션에서 자세히 설명되며, 여기서는 익숙하지 않아도 됩니다.
 
 Setting up the simulation infrastructure
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The manager will also take care of building and deploying all software
-components necessary to run your simulation (including switches for the networked
-case). The manager will also handle
-programming FPGAs. To tell the manager to set up our simulation infrastructure,
-let's run:
+관리자는 또한 시뮬레이션을 실행하는 데 필요한 모든 소프트웨어 구성 요소(네트워크의 경우 스위치 포함)를 빌드하고 배포합니다. 관리자는 또한 FPGA 프로그래밍을 처리합니다. 시뮬레이션 인프라를 설정하려면 다음 명령을 실행하십시오:
 
 .. code-block:: bash
 
     firesim infrasetup
 
-
-For a complete run, you should expect output like the following:
+완전한 실행을 위해서는 다음과 같은 출력을 예상할 수 있습니다:
 
 .. code-block:: bash
 
     centos@ip-172-30-2-111.us-west-2.compute.internal:~/firesim-new/deploy$ firesim infrasetup
     FireSim Manager. Docs: http://docs.fires.im
+
+
     Running: infrasetup
 
     Building FPGA software driver for FireSim-FireSimQuadRocketConfig-BaseF1Config
@@ -196,32 +151,22 @@ For a complete run, you should expect output like the following:
     The full log of this run is:
     /home/centos/firesim-new/deploy/logs/2018-05-19--06-07-33-infrasetup-2Z7EBCBIF2TSI66Q.log
 
+이 작업들 중 많은 부분이 몇 분 정도 소요될 것입니다. 특히 리포지토리의 클린 복사본의 경우(``f1.16xlarges`` 의 경우 부팅하는 데 몇 분 정도 소요되므로 ``Checking if host instance is up...`` 단계에서 멈춰 있는 것처럼 보일 수 있습니다). 여기의 콘솔 출력은 "사용자 친화적"인 버전의 출력입니다. 진행 상황을 자세히 보고 싶다면 ``firesim/deploy/logs/`` 에서 최신 로그 파일을 ``tail -f`` 로 확인하십시오.
 
-Many of these tasks will take several minutes, especially on a clean copy of
-the repo (in particular, ``f1.16xlarges`` usually take a couple of minutes to
-start, so don't be alarmed if you're stuck at ``Checking if host instance is
-up...``) .  The console output here contains the "user-friendly" version of the
-output. If you want to see detailed progress as it happens, ``tail -f`` the
-latest logfile in ``firesim/deploy/logs/``.
+이 시점에서 Run Farm의 ``f1.16xlarge`` 인스턴스는 시뮬레이션을 실행하는 데 필요한 모든 인프라를 갖추게 됩니다.
 
-At this point, the ``f1.16xlarge`` instance in our Run Farm has all the
-infrastructure necessary to run everything in our simulation.
-
-So, let's launch our simulation!
+이제 시뮬레이션을 시작해 봅시다!
 
 Running the simulation
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Finally, let's run our simulation! To do so, run:
+마지막으로, 시뮬레이션을 실행해 봅시다! 이를 위해 다음 명령을 실행합니다:
 
 .. code-block:: bash
 
 	firesim runworkload
 
-
-This command boots up the 8-port switch simulation and then starts 8 Rocket Chip
-FPGA Simulations, then prints out the live status of the simulated
-nodes and switch every 10s. When you do this, you will initially see output like:
+이 명령은 8포트 스위치 시뮬레이션을 부팅한 후 8개의 Rocket Chip FPGA 시뮬레이션을 시작하고, 시뮬레이션된 노드와 스위치의 상태를 10초마다 출력합니다. 이 명령을 실행하면 처음에는 다음과 같은 출력이 나타납니다:
 
 .. code-block:: bash
 
@@ -245,9 +190,7 @@ nodes and switch every 10s. When you do this, you will initially see output like
 	[172.30.2.178] Starting FPGA simulation for slot: 7.
 	[172.30.2.178] Executing task 'monitor_jobs_wrapper'
 
-
-If you don't look quickly, you might miss it, because it will be replaced with
-a live status page once simulations are kicked-off:
+빠르게 보지 않으면 놓칠 수 있습니다. 왜냐하면 시뮬레이션이 시작되면 실시간 상태 페이지로 대체되기 때문입니다:
 
 .. code-block:: text
 
@@ -284,37 +227,24 @@ a live status page once simulations are kicked-off:
     8/8 simulations are still running.
     --------------------------------------------------------------------------------
 
+정확한 사이클로 네트워크를 시뮬레이션하는 모드에서는 시뮬레이션된 노드 중 하나라도 종료되면 시뮬레이션
 
-In cycle-accurate networked mode, this will exit when any ONE of the
-simulated nodes shuts down. So, let's let it run and open another ssh
-connection to the manager instance. From there, ``cd`` into your firesim
-directory again and ``source sourceme-manager.sh`` again to get our ssh key
-setup. To access our simulated system, ssh into the IP address being printed by
-the status page, **from your manager instance**. In our case, from the above
-output, we see that our simulated system is running on the instance with IP
-``172.30.2.178``. So, run:
+이 종료됩니다. 시뮬레이션을 실행하고 관리자 인스턴스에 새로운 ssh 연결을 열어 봅시다. 그런 다음, 다시 firesim 디렉토리로 이동하고 ``sourceme-manager.sh`` 를 다시 소스하여 ssh 키를 설정합니다. 시뮬레이션된 시스템에 액세스하려면, **관리자 인스턴스에서** 상태 페이지에 출력된 IP 주소로 ssh를 실행합니다. 위의 출력에서 시뮬레이션된 시스템이 ``172.30.2.178`` IP를 가진 인스턴스에서 실행 중임을 알 수 있습니다. 따라서 다음 명령을 실행합니다:
 
 .. code-block:: bash
 
-	[RUN THIS ON YOUR MANAGER INSTANCE!]
+	[관리자 인스턴스에서 실행하세요!]
 	ssh 172.30.2.178
 
-This will log you into the instance running the simulation. On this machine,
-run ``screen -ls`` to get the list of all running simulation components.
-Attaching to the screens ``fsim0`` to ``fsim7`` will let you attach to the
-consoles of any of the 8 simulated nodes. You'll also notice an additional
-screen for the switch, however by default there is no interesting output printed
-here for performance reasons.
+이 명령은 시뮬레이션을 실행하는 인스턴스에 로그인합니다. 이 머신에서 ``screen -ls`` 명령을 실행하여 실행 중인 모든 시뮬레이션 구성 요소의 목록을 확인할 수 있습니다. ``fsim0`` 에서 ``fsim7`` 까지의 스크린에 연결하면 시뮬레이션된 8개 노드 중 어느 노드의 콘솔에도 연결할 수 있습니다. 스위치에 대한 추가 스크린도 있지만, 성능상의 이유로 기본적으로는 이곳에 흥미로운 출력이 없습니다.
 
-For example, if we want to enter commands into node zero, we can attach
-to its console like so:
+예를 들어, 0번 노드의 콘솔로 들어가고 싶다면 다음과 같이 콘솔에 연결할 수 있습니다:
 
 .. code-block:: bash
 
 	screen -r fsim0
 
-Voila! You should now see Linux booting on the simulated node and then be prompted
-with a Linux login prompt, like so:
+짜잔! 이제 시뮬레이션된 노드에서 Linux가 부팅되고, Linux 로그인 프롬프트가 나타나는 것을 볼 수 있습니다:
 
 .. code-block:: text
 
@@ -336,13 +266,9 @@ with a Linux login prompt, like so:
     Welcome to Buildroot
     buildroot login:
 
-If you also ran the single-node no-nic simulation you'll notice a difference
-in this boot output -- here, Linux sees the NIC and its assigned MAC address and
-automatically brings up the ``eth0`` interface at boot.
+단일 노드 no-nic 시뮬레이션도 실행했다면, 이 부팅 출력에서 차이점을 확인할 수 있습니다. 여기서는 Linux가 NIC와 할당된 MAC 주소를 인식하고 부팅 시 자동으로 ``eth0`` 인터페이스를 활성화합니다.
 
-Now, you can login to the system! The username is ``root`` and there is no password.
-At this point, you should be presented with a regular console,
-where you can type commands into the simulation and run programs. For example:
+이제 시스템에 로그인할 수 있습니다! 사용자 이름은 ``root`` 이고 비밀번호는 없습니다. 이 시점에서 시뮬레이션에서 명령을 입력하고 프로그램을 실행할 수 있는 일반 콘솔이 표시됩니다. 예를 들어:
 
 .. code-block:: bash
 
@@ -353,11 +279,7 @@ where you can type commands into the simulation and run programs. For example:
 	Linux buildroot 4.15.0-rc6-31580-g9c3074b5c2cd #1 SMP Thu May 17 22:28:35 UTC 2018 riscv64 GNU/Linux
 	#
 
-
-At this point, you can run workloads as you'd like. To finish off this getting started guide,
-let's poweroff the simulated system and see what the manager does. To do so,
-in the console of the simulated system, run ``poweroff -f``:
-
+이제 작업 부하를 원하는 대로 실행할 수 있습니다. 이 시작 가이드를 마무리하기 위해, 시뮬레이션된 시스템을 종료하고 관리자가 어떻게 동작하는지 확인해 봅시다. 이를 위해, 시뮬레이션된 시스템의 콘솔에서 ``poweroff -f`` 명령을 실행하십시오:
 
 .. code-block:: bash
 
@@ -368,7 +290,7 @@ in the console of the simulated system, run ``poweroff -f``:
 	Linux buildroot 4.15.0-rc6-31580-g9c3074b5c2cd #1 SMP Thu May 17 22:28:35 UTC 2018 riscv64 GNU/Linux
 	# poweroff -f
 
-You should see output like the following from the simulation console:
+시뮬레이션 콘솔에서 다음과 같은 출력이 나타날 것입니다:
 
 .. code-block:: bash
 
@@ -384,9 +306,7 @@ You should see output like the following from the simulation console:
 
 	[screen is terminating]
 
-
-You'll also notice that the manager polling loop exited! You'll see output like this
-from the manager:
+관리자 폴링 루프도 종료되었음을 알 수 있습니다! 관리자에서 다음과 같은 출력이 나타날 것입니다:
 
 .. code-block:: text
 
@@ -444,12 +364,11 @@ from the manager:
 	The full log of this run is:
 	/home/centos/firesim-new/deploy/logs/2018-05-19--06-39-35-runworkload-4CDB78E3A4IA9IYQ.log
 
-In the cluster case, you'll notice that shutting down ONE simulator causes the
-whole simulation to be torn down -- this is because we currently do not implement
-any kind of "disconnect" mechanism to remove one node from a globally-cycle-accurate
-simulation.
+클러스터의 경우, 하나의 시뮬레이터를 종료하면 전체 시뮬레이션이 종료됩니다. 이는 우리가 현재 전역 사이클 정확 시뮬레이션에서 하나의 노드를 제거하기 위한 "연결 끊기" 메커니즘을 구현하지 않았기 때문입니다.
 
-If you take a look at the workload output directory given in the manager output (in this case, ``/home/centos/firesim-new/deploy/results-workload/2018-05-19--06-39-35-br-base/``), you'll see the following:
+관리자 출력에서 지정된 작업 부하 출력 디렉토리(이 경우 ``/home/centos/firesim-new/deploy/results-workload/2018-05-19--06-39-35-br-base/``)를 확인하면
+
+ 다음 파일들이 있습니다:
 
 .. code-block:: bash
 
@@ -480,22 +399,15 @@ If you take a look at the workload output directory given in the manager output 
 	-rw-rw-r-- 1 centos centos 8157 May 19 06:45 br-base7/uartlog
 	-rw-rw-r-- 1 centos centos  153 May 19 06:45 switch0/switchlog
 
+이 파일들은 관리자가 시뮬레이션 실행 후 자동으로 관리자에게 복사하도록 지정한 파일들입니다(벤치마크를 자동으로 실행하는 데 유용합니다). 각 시뮬레이션된 노드와 클러스터의 각 시뮬레이션된 스위치에 대해 디렉토리가 있습니다. :ref:`deprecated-defining-custom-workloads` 섹션에서 이 과정을 자세히 설명합니다.
 
-What are these files? They are specified to the manager in a configuration file
-(``deploy/workloads/br-base-uniform.json``) as files that we want
-automatically copied back to our manager after we run a simulation, which is
-useful for running benchmarks automatically. Note that there is a directory for
-each simulated node and each simulated switch in the cluster. The
-:ref:`deprecated-defining-custom-workloads` section describes this process in detail.
-
-For now, let's wrap-up our guide by terminating the ``f1.16xlarge`` instance
-that we launched. To do so, run:
+이제 ``f1.16xlarge`` 인스턴스를 종료하는 것으로 이 가이드를 마무리하겠습니다. 이를 위해 다음 명령을 실행하십시오:
 
 .. code-block:: bash
 
 	firesim terminaterunfarm
 
-Which should present you with the following:
+다음과 같은 출력을 확인할 수 있습니다:
 
 .. code-block:: bash
 
@@ -514,9 +426,7 @@ Which should present you with the following:
 	[]
 	Type yes, then press enter, to continue. Otherwise, the operation will be cancelled.
 
-
-You must type ``yes`` then hit enter here to have your instances terminated. Once
-you do so, you will see:
+인스턴스를 종료하려면 여기서 ``yes`` 를 입력하고 엔터를 눌러야 합니다. 그러면 다음과 같은 출력을 볼 수 있습니다:
 
 .. code-block:: text
 
@@ -527,11 +437,6 @@ you do so, you will see:
 	The full log of this run is:
 	/home/centos/firesim-new/deploy/logs/2018-05-19--06-50-37-terminaterunfarm-3VF0Z2KCAKKDY0ZU.log
 
-**At this point, you should always confirm in your AWS management console that
-the instance is in the shutting-down or terminated states. You are ultimately
-responsible for ensuring that your instances are terminated appropriately.**
+**이 시점에서 인스턴스가 종료 상태 또는 종료 중 상태에 있는지 AWS 관리 콘솔에서 항상 확인해야 합니다. 인스턴스가 적절하게 종료되었는지 확인하는 것은 궁극적으로 사용자의 책임입니다.**
 
-Congratulations on running a cluster FireSim simulation! At this point, you can
-check-out some of the advanced features of FireSim in the sidebar to the left.
-Or, hit next to continue to a guide that shows you how to build your own
-custom FPGA images.
+클러스터 FireSim 시뮬레이션을 실행한 것을 축하드립니다! 이제 왼쪽 사이드바에서 FireSim의 고급 기능 중 일부를 확인할 수 있습니다. 또는, 다음을 클릭하여 맞춤형 FPGA 이미지를 만드는 방법을 보여주는 가이드로 이동하십시오.

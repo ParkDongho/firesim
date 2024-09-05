@@ -3,8 +3,7 @@
 Initial Setup/Installation
 ================================
 
-This section will guide you through initial setup of your AWS account to support
-FireSim, as well as cloning/installing FireSim on your manager instance.
+이 섹션에서는 FireSim을 지원하기 위해 AWS 계정을 초기 설정하고, 매니저 인스턴스에 FireSim을 클론하고 설치하는 방법을 안내합니다.
 
 .. toctree::
    :maxdepth: 2
@@ -14,4 +13,3 @@ FireSim, as well as cloning/installing FireSim on your manager instance.
    First-time-AWS-User-Setup
    Configuring-Required-Infrastructure-in-Your-AWS-Account
    Setting-up-your-Manager-Instance
-

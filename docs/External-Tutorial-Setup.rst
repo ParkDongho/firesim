@@ -1,15 +1,14 @@
 External Tutorial Setup
 ===================================
 
-This section of the documentation is for external attendees of a
-in-person FireSim and Chipyard tutorial.
-Please follow along with the following steps to get setup if you already have an AWS EC2 account.
+이 문서 섹션은 대면 FireSim 및 Chipyard 튜토리얼에 참석하는 외부 참가자들을 위한 것입니다.
+이미 AWS EC2 계정을 가지고 있다면, 다음 단계를 따라 설정을 진행하세요.
 
-.. Note:: These steps should take around 2hrs if you already have an AWS EC2 account.
+.. Note:: AWS EC2 계정을 이미 가지고 있다면, 이 단계들은 약 2시간 정도 소요됩니다.
 
-1. Start following the FireSim documentation from :ref:`initial-setup` but ending at :ref:`setting-up-firesim-repo` (make sure to **NOT** clone the FireSim repository)
+1. :ref:`initial-setup` 에서 시작하여 :ref:`setting-up-firesim-repo` 에서 끝나는 FireSim 문서를 따라 진행하세요(절대 FireSim 리포지토리를 클론하지 마세요). 
 
-2. Run the following commands:
+2. 다음 명령을 실행하세요:
 
 .. code-block:: bash
 
@@ -108,7 +107,7 @@ Please follow along with the following steps to get setup if you already have an
 
     )
 
-3. Next copy the following contents and replace your entire ``~/.bashrc`` file with this:
+3. 다음 내용을 복사하여 ``~/.bashrc`` 파일 전체를 다음 내용으로 대체하세요:
 
 .. code-block:: bash
 
@@ -124,4 +123,5 @@ Please follow along with the following steps to get setup if you already have an
     export FDIR=/home/centos/chipyard-afternoon/sims/firesim/
     export CDIR=/home/centos/chipyard-afternoon/
 
-4. All done! Now continue with the in-person tutorial.
+4. 완료되었습니다! 이제 대면 튜토리얼을 계속 진행하세요.
+
