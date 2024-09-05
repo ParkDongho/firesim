@@ -12,32 +12,25 @@ containers respectively.
 "Inputs" to the Manager
 -------------------------
 
-The manager gets configuration information from several places:
+매니저는 여러 곳에서 구성 정보를 얻습니다:
 
-- Command Line Arguments, consisting of:
+- 명령줄 인수, 다음을 포함한:
 
-  - Paths to configuration files to use
+  - 사용할 구성 파일의 경로
 
-  - A task to run
+  - 실행할 작업
 
-  - Arguments to the task
+  - 작업에 대한 인수
 
-- Configuration Files
+- 구성 파일
 
-- Environment Variables
+- 환경 변수
 
-- Topology definitions for networked simulations (``user_topology.py``)
+- 네트워크 시뮬레이션을 위한 토폴로지 정의 (``user_topology.py``)
 
-The following sections detail these inputs. Hit Next to continue.
-
+다음 섹션에서는 이러한 입력 내용을 자세히 설명합니다. 계속하려면 Next를 클릭하십시오.
 
 Logging
 ---------------
 
-The manager produces detailed logs when you run any command, which is useful
-to share with the FireSim developers for debugging purposes in case you
-encounter issues. The logs contain more detailed output than the manager
-sends to stdout/stderr during normal operation, so it's also useful if you
-want to take a peek at the detailed commands manager is running to facilitate
-builds and simulations. Logs are stored in ``firesim/deploy/logs/``.
-
+매니저는 명령을 실행할 때 자세한 로그를 생성하며, 이는 문제가 발생할 경우 디버깅 목적으로 FireSim 개발자와 공유하는 데 유용합니다. 로그에는 평소 운영 중에 매니저가 stdout/stderr로 보내는 것보다 더 자세한 출력이 포함되어 있으므로, 빌드 및 시뮬레이션을 촉진하기 위해 매니저가 실행하는 상세한 명령을 엿보고 싶을 때도 유용합니다. 로그는 ``firesim/deploy/logs/`` 에 저장됩니다.

@@ -6,174 +6,142 @@ Compiler & Driver Development
 Integration Tests
 +++++++++++++++++
 
-These are ``ScalaTests`` that call out to FireSim's Makefiles. These
-constitute the bulk of FireSim's tests for Target, Compiler, and Driver side
-features. Each of these tests proceeds as follows:
+이 테스트들은 FireSim의 Makefile을 호출하는 ``ScalaTests`` 입니다. 이 테스트들은 Target, Compiler, 그리고 Driver 측 기능에 대한 FireSim의 대부분의 테스트를 구성합니다. 각각의 테스트는 다음과 같이 진행됩니다:
 
-#. Elaborate a small Chisel target design that exercises a single feature (e.g., printf synthesis)
-#. Compile the design with GoldenGate
-#. Compile metasimulator using a target-specific driver and the Golden Gate-generated collateral
-#. Run metasimulation with provided arguments (possibly multiple times)
-#. Post-process metasimulation outputs in Scala
+#. 단일 기능을 시험하는 작은 Chisel 타겟 디자인을 설계합니다 (예: printf 합성).
+#. GoldenGate로 디자인을 컴파일합니다.
+#. 타겟별 드라이버와 Golden Gate에서 생성된 부수 자료를 사용하여 메타시뮬레이터를 컴파일합니다.
+#. 지정된 인수로 메타시뮬레이션을 실행합니다 (여러 번 실행될 수 있습니다).
+#. Scala에서 메타시뮬레이션 출력을 후처리합니다.
 
-Single tests may be run directly out of :gh-file-ref:`sim/` as follows::
+개별 테스트는 :gh-file-ref:`sim/` 디렉토리에서 다음과 같이 직접 실행할 수 있습니다::
 
-   # Run all Chipyard-based tests (uses Rocket + BOOM)
+   # Chipyard 기반의 모든 테스트를 실행 (Rocket + BOOM 사용)
    make test
 
-   # Run all integration tests (very long running, not recommended)
+   # 모든 통합 테스트 실행 (매우 오래 걸리므로 권장하지 않음)
    make test TARGET_PROJECT=midasexamples
 
-   # Run a specific integration test (desired)
+   # 특정 통합 테스트 실행 (권장)
    make testOnly TARGET_PROJECT=midasexamples SCALA_TEST=firesim.midasexamples.GCDF1Test
 
-   # note: you can disable certain subsets of tests by using a
-   # TEST_DISABLE_{VERILATOR,VCS,VIVADO}=1 environment variable
+   # 주의: 특정 테스트 서브셋을 비활성화하려면 환경 변수
+   # TEST_DISABLE_{VERILATOR,VCS,VIVADO}=1을 사용할 수 있습니다.
 
-These tests may be run from the SBT console continuously, and SBT will rerun
-them on Scala changes (but not driver changes). Out of :gh-file-ref:`sim/`::
+이 테스트들은 SBT 콘솔에서 연속적으로 실행할 수 있으며, SBT는 Scala 변경 시 테스트를 다시 실행합니다 (하지만 드라이버 변경은 아님). :gh-file-ref:`sim/` 디렉토리에서 실행::
 
-   # Launch the SBT console into the firesim subproject
-   # NB: omitting TARGET_PROJECT will put you in the FireChip subproject instead
+   # SBT 콘솔을 firesim 서브프로젝트로 시작
+   # 참고: TARGET_PROJECT를 생략하면 FireChip 서브프로젝트로 이동합니다.
    make TARGET_PROJECT=midasexamples sbt
 
-   # Compile the Scala test sources (optional, to enable tab completion)
+   # Scala 테스트 소스를 컴파일 (선택 사항, 탭 완성을 위해)
    sbt:firesim> Test / compile
 
-   # Run a specific test once
+   # 특정 테스트를 한 번 실행
    sbt:firesim> testOnly firesim.midasexamples.GCDF1Test
 
-   # Continuously rerun the test on Scala changes
+   # Scala 변경 시 테스트를 연속적으로 다시 실행
    sbt:firesim> ~testOnly firesim.midasexamples.GCDF1Test
 
 
 Key Files & Locations
 ---------------------
 - :gh-file-ref:`sim/firesim-lib/src/test/scala/TestSuiteCommon.scala`
-   Base ScalaTest class for all tests that use FireSim's make build system
+   FireSim의 make 빌드 시스템을 사용하는 모든 테스트의 기본 ScalaTest 클래스
 - :gh-file-ref:`sim/src/test/scala/midasexamples/TutorialSuite.scala`
-   Extension of TestSuiteCommon for most integration tests + concrete subclasses
+   대부분의 통합 테스트를 위한 TestSuiteCommon의 확장 + 구체적인 서브클래스
 - :gh-file-ref:`sim/src/main/cc/midasexamples/`
-   C++ sources for target-specific drivers
+   타겟별 드라이버를 위한 C++ 소스
 - :gh-file-ref:`sim/src/main/cc/midasexamples/TestHarness.h`
-   A common driver to extend for simple tests
+   간단한 테스트를 위해 확장하는 공통 드라이버
 - :gh-file-ref:`sim/src/main/scala/midasexamples/`
-   Where top-level Chisel modules (targets) are defined
+   최상위 Chisel 모듈(타겟)이 정의되는 위치
 
 Defining a New Test
 --------------------
 
-#. Define a new target module (if applicable) under ``sim/src/main/scala/midasexamples``.
-#. Define a driver by extending ``simif_t`` or another child class under ``src/main/cc/midasexamples``. Tests
-   sequenced with the Peek Poke bridge may extend ``simif_peek_poke_t``.
-
-#. Create a test in ``src/main/cc/midasexamples``. Register bridges and add override the ``run`` method.
-
-#. Define a ScalaTest class for your design by extending ``TutorialSuite``. Parameters will
-   define define the tuple (``DESIGN``, ``TARGET_CONFIG``, ``PLATFORM_CONFIG``), and call
-   out additional plusArgs to pass to the metasimulator.  See the ScalaDoc for
-   more info. Post-processing of metasimulator outputs (e.g., checking output file contents) can be implemented in
-   the body of your test class.
+#. ``sim/src/main/scala/midasexamples`` 디렉토리에서 새로운 타겟 모듈을 정의합니다 (해당하는 경우).
+#. ``src/main/cc/midasexamples`` 디렉토리에서 ``simif_t`` 또는 다른 자식 클래스를 확장하여 드라이버를 정의합니다. Peek Poke 브리지와 함께 순차 처리되는 테스트는 ``simif_peek_poke_t`` 를 확장할 수 있습니다.
+#. ``src/main/cc/midasexamples`` 에서 테스트를 생성합니다. 브리지를 등록하고 ``run`` 메소드를 덮어씁니다.
+#. ``TutorialSuite`` 를 확장하여 디자인에 대한 ScalaTest 클래스를 정의합니다. 매개변수는 튜플 (``DESIGN``, ``TARGET_CONFIG``, ``PLATFORM_CONFIG``)을 정의하고 메타시뮬레이터에 전달할 추가 plusArgs를 호출합니다. 자세한 내용은 ScalaDoc을 참조하세요. 메타시뮬레이터 출력의 후처리(예: 출력 파일 내용 확인)는 테스트 클래스 본문에서 구현할 수 있습니다.
 
 
 Synthesizable Unit Tests
 ++++++++++++++++++++++++
 
-These are derived from Rocket-Chip's synthesizable unit test library and are
-used to test smaller, stand-alone Chisel modules.
+이 테스트들은 Rocket-Chip의 합성 가능한 유닛 테스트 라이브러리에서 파생되었으며, 더 작은 독립형 Chisel 모듈을 테스트하는 데 사용됩니다.
 
-Synthesizable unit tests may be run out of :gh-file-ref:`sim/` as follows::
+합성 가능한 유닛 테스트는 :gh-file-ref:`sim/` 디렉토리에서 다음과 같이 실행할 수 있습니다::
 
-   # Run default tests without waves
+   # 웨이브 없이 기본 테스트 실행
    $ make run-midas-unittests
 
-   # Run default suite with waves
+   # 웨이브와 함께 기본 테스트 실행
    $ make run-midas-unittests-debug
 
-   # Run default suite under Verilator
+   # Verilator에서 기본 테스트 실행
    $ make run-midas-unittests  EMUL=verilator
 
-   # Run a different suite (registered under class name TimeOutCheck)
+   # 다른 테스트 스위트 실행 (TimeOutCheck 클래스명으로 등록)
    $ make run-midas-unittests  CONFIG=TimeOutCheck
 
-Setting the make variable ``CONFIG`` to different scala class names will select
-between different sets of unittests.  All synthesizable unittests registered
-under ``WithAllUnitTests`` class are run from ScalaTest and in CI.
+make 변수 ``CONFIG`` 를 다른 scala 클래스 이름으로 설정하면 다른 유닛 테스트 세트를 선택할 수 있습니다. 모든 합성 가능한 유닛 테스트는 ``WithAllUnitTests`` 클래스에 등록되어 ScalaTest와 CI에서 실행됩니다.
 
 Key Files & Locations
 ---------------------
 
 - :gh-file-ref:`sim/midas/src/main/scala/midas/SynthUnitTests.scala`
-   Synthesizable unit test modules are registered here.
+   합성 가능한 유닛 테스트 모듈이 이곳에 등록됩니다.
 - :gh-file-ref:`sim/midas/src/main/cc/unittest/Makefrag`
-   Make recipes for building and running the tests.
+   테스트 빌드와 실행을 위한 Make 레시피.
 - :gh-file-ref:`sim/firesim-lib/src/test/scala/TestSuiteCommon.scala`
-   ScalaTest wrappers for running synthesizable unittests
+   합성 가능한 유닛 테스트를 실행하기 위한 ScalaTest 래퍼
 
 Defining a New Test
 --------------------
-#. Define a new Chisel module that extends ``freechips.rocketchip.unittest.UnitTest``
-#. Register your modules in a ``Config`` using the ``UnitTests`` key. See ``SynthUnitTests.scala`` for examples.
+#. ``freechips.rocketchip.unittest.UnitTest`` 를 확장하는 새로운 Chisel 모듈을 정의합니다.
+#. ``Config`` 에서 ``UnitTests`` 키를 사용하여 모듈을 등록합니다. 예시는 ``SynthUnitTests.scala`` 를 참조하세요.
 
 Scala Unit Testing
 ++++++++++++++++++
 
-We also use ScalaTest to test individual transforms, classes, and target-side Chisel
-features (in ``targetutils`` package). These can be found in
-``<subproject>/src/test/scala`` as is customary of Scala projects.  ScalaTests in ``targetUtils``
-generally ensure that target-side annotators behave correctly when deployed in a
-generator (they elaborate correctly or they give the desired error message.)
-ScalaTests in ``midas`` are mostly tailored to testing FIRRTL transforms, and
-have copied FIRRTL testing utilities into the source tree to make that process easier.
+우리는 또한 개별 변환, 클래스, 타겟 측 Chisel 기능 (``targetutils`` 패키지에서)을 테스트하기 위해 ScalaTest를 사용합니다. 이 테스트들은 Scala 프로젝트의 관례에 따라 ``<subproject>/src/test/scala`` 에 위치합니다. ``targetUtils`` 의 ScalaTests는 일반적으로 타겟 측 어노테이터가 제너레이터에서 올바르게 작동하는지 확인합니다 (올바르게 elaborated 되거나 원하는 오류 메시지를 제공합니다). ``midas`` 의 ScalaTests는 주로 FIRRTL 변환을 테스트하는 데 맞춰져 있으며, FIRRTL 테스트 유틸리티를 소스 트리에 복사하여 그 과정을 쉽게 합니다.
 
-``targetUtils`` scala tests can be run out of :gh-file-ref:`sim/` as follows::
+``targetUtils`` scala 테스트는 :gh-file-ref:`sim/` 에서 다음과 같이 실행할 수 있습니다::
 
-   # Pull open the SBT console in the firesim subproject
+   # firesim 서브프로젝트에서 SBT 콘솔 열기
    $ make TARGET_PROJECT=midasexamples sbt
 
-   # Switch to the targetutils package
+   # targetutils 패키지로 전환
    sbt:firesim> project targetutils
 
-   # Run all scala tests under the ``targetutils`` subproject
+   # ``targetutils`` 서브프로젝트에서 모든 scala 테스트 실행
    sbt:midas-targetutils> test
 
-Golden Gate (formerly midas) scala tests can be run by setting the scala project
-to ``midas``, as in step 2 above.
+Golden Gate (이전 명칭 midas) scala 테스트는 위의 2단계처럼 scala 프로젝트를 ``midas`` 로 설정하여 실행할 수 있습니다.
 
 Key Files & Locations
 ---------------------
 
 - :gh-file-ref:`sim/midas/src/test/scala/midas`
-   Location of GoldenGate ScalaTests
+   GoldenGate ScalaTests의 위치
 - :gh-file-ref:`sim/midas/targetutils/src/test/scala`
-   Location of targetutils ScalaTests
+   targetutils ScalaTests의 위치
 
 Defining A New Test
 ---------------------
 
-Extend the appropriate ScalaTest spec or base class, and
-place the file under the correct ``src/test/scala`` directory. They will be
-automatically enumerated by ScalaTest and will run in CI by default.
+적절한 ScalaTest 사양 또는 기본 클래스를 확장하고, 파일을 올바른 ``src/test/scala`` 디렉토리 아래에 배치합니다. ScalaTest에 의해 자동으로 열거되어 기본적으로 CI에서 실행됩니다.
 
 C/C++ guidelines
 ++++++++++++++++
 
-The C++ sources are formatted using ``clang-format`` and all submitted pull-requests
-must be formatted prior to being accepted and merged. The sources follow the coding
-style defined `here <https://github.com/firesim/firesim/blob/main/.clang-format>`_.
-Additionally, ``clang-tidy`` is also run on CI to lint and validate C++ sources.
-The tool follows the guidelines and configuration of LLVM.
+C++ 소스는 ``clang-format`` 을 사용하여 포맷팅되며, 모든 제출된 pull-request는 수락되고 병합되기 전에 포맷팅되어야 합니다. 소스는 ` 여기 <https://github.com/firesim/firesim/blob/main/.clang-format>`_ 에서 정의된 코딩 스타일을 따릅니다. 또한, ``clang-tidy`` 도 CI에서 실행되어 C++ 소스를 린트하고 검증합니다. 이 도구는 LLVM의 지침과 구성을 따릅니다.
 
-``git clang-format`` can be used before committing to ensure that files are properly formatted.
-``make -C sim clang-tidy`` can be used to run ``clang-tidy``. `make -C sim clang-tidy-fix`
-automatically applies most fixes, but some errors and warnings require user intervention.
+``git clang-format`` 을 사용하여 커밋하기 전에 파일이 올바르게 포맷되었는지 확인할 수 있습니다.
+``make -C sim clang-tidy`` 를 사용하여 ``clang-tidy`` 를 실행할 수 있습니다. `make -C sim clang-tidy-fix` 는 대부분의 수정을 자동으로 적용하지만, 일부 오류와 경고는 사용자 개입이 필요할 수 있습니다.
 
 Scala guidelines
 ++++++++++++++++
 
-The Scala sources are formatted using both ``Scalafmt`` and ``Scalafix``. All submitted
-pull-requests must be formatted prior to being accepted and merged. The configuration files
-are found here: `Scalafmt config <https://github.com/firesim/firesim/blob/main/sim/.scalafix.conf>`_,
-`Scalafix config <https://github.com/firesim/firesim/blob/main/sim/.scalafmt.conf>`_. Run
-``make -C sim scala-lint-check`` to check your code for compliance. Run ``make -C sim scala-lint`` to
-automatically apply fixes.
+Scala 소스는 ``Scalafmt`` 와 ``Scalafix`` 를 사용하여 포맷팅됩니다. 모든 제출된 pull-request는 수락되고 병합되기 전에 포맷팅되어야 합니다. 구성 파일은 다음에서 찾을 수 있습니다: `Scalafmt config <https://github.com/firesim/firesim/blob/main/sim/.scalafix.conf>`_, `Scalafix config <https://github.com/firesim/firesim/blob/main/sim/.scalafmt.conf>`_. `make -C sim scala-lint-check`` 를 실행하여 코드가 규정을 준수하는지 확인합니다. `make -C sim scala-lint`` 를 실행하여 자동으로 수정을 적용하십시오.

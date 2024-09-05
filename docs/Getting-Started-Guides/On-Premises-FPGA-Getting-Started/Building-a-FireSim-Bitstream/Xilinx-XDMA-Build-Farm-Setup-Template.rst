@@ -22,14 +22,14 @@ setup steps below on your single machine.
 
 **Machines:** Build Farm Machines.
 
-Running builds for |fpga_name| in FireSim requires |vivado_with_version|.
-Other versions are unlikely to work out-of-the-box.
+FireSim에서 |fpga_name|에 대한 빌드를 실행하려면 |vivado_with_version|가 필요합니다.
+다른 버전은 기본 설정으로 동작하지 않을 가능성이 큽니다.
 
-On each Build Farm machine, do the following:
+각 Build Farm machine에서 다음을 수행하십시오:
 
-1. Install |vivado_with_version| from the `Xilinx Downloads Website <https://www.xilinx.com/support/download.html>`_. By default, Vivado will be installed to |vivado_default_install_path|. We recommend keeping this default. If you change it to something else, you will need to adjust the path in the rest of the setup steps.
+1. `Xilinx Downloads Website <https://www.xilinx.com/support/download.html>`_ 에서 |vivado_with_version|를 설치합니다. 기본적으로 Vivado는 |vivado_default_install_path|에 설치됩니다. 이 기본값을 유지하는 것이 좋습니다. 다른 경로로 변경하는 경우, 나머지 설정 단계에서 경로를 조정해야 합니다.
 
-2. Add the following to ``~/.bashrc`` so that ``vivado`` is available when ``ssh``-ing into the machine:
+2. ``~/.bashrc`` 에 다음을 추가하여 ``ssh`` 를 통해 머신에 접속할 때 ``vivado`` 가 사용 가능하도록 합니다:
 
 .. code-block:: bash
    :substitutions:
@@ -39,7 +39,7 @@ On each Build Farm machine, do the following:
 3. |board_package_install|
 
 
-If you have multiple Build Farm Machines, you should repeat this process for each.
+여러 대의 Build Farm Machine이 있는 경우, 각 머신에 대해 이 과정을 반복해야 합니다.
 
 
 2. Verify Build Farm Machine environment
@@ -47,26 +47,15 @@ If you have multiple Build Farm Machines, you should repeat this process for eac
 
 **Machines:** Manager Machine and Run Farm Machines
 
-Finally, let's ensure that |vivado_with_version| is properly sourced in
-your shell setup (i.e. ``.bashrc``) so that any shell on your Build Farm Machines
-can use the corresponding programs.  The environment variables should be
-visible to any non-interactive shells that are spawned.
+마지막으로, |vivado_with_version|가 shell 설정 (즉, ``.bashrc``)에 제대로 소싱되어 Build Farm Machines에서 모든 shell이 해당 프로그램을 사용할 수 있는지 확인합시다. 환경 변수는 생성된 모든 비대화형 shell에서 볼 수 있어야 합니다.
 
-You can check this by running the following on the Manager Machine,
-replacing ``BUILD_FARM_IP`` with ``localhost`` if your Build Farm machine
-and Manager machine are the same machine, or replacing it with the Build Farm 
-machine's IP address if they are different machines. 
+다음 명령어를 Manager Machine에서 실행하여 확인할 수 있습니다. Build Farm Machine과 Manager Machine이 동일한 머신인 경우 ``BUILD_FARM_IP`` 를 ``localhost`` 로 대체하고, 다른 머신인 경우 Build Farm Machine의 IP 주소로 대체하십시오.
 
 .. code-block:: bash
 
     ssh BUILD_FARM_IP printenv
 
 
-Ensure that the output of the command shows that the |vivado_with_version| tools are
-present in the printed environment variables (i.e., ``PATH`` and ``XILINX_VIVADO``).
+명령어의 출력 결과에 |vivado_with_version| 도구가 인쇄된 환경 변수 (즉, ``PATH`` 및 ``XILINX_VIVADO``)에 존재하는지 확인하십시오.
 
-If you have multiple Build Farm machines, you should repeat this process for
-each Build Farm machine, replacing ``BUILD_FARM_IP`` with a different Build Farm Machine's
-IP address.
-
-
+여러 대의 Build Farm Machine이 있는 경우, 각 Build Farm Machine의 IP 주소와 함께 이 과정을 반복해야 합니다.

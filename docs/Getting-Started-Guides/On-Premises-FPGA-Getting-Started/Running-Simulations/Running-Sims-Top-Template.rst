@@ -33,6 +33,4 @@ Once this is completed, you'll have the following files:
 -  ``YOUR_FIRESIM_REPO/target-design/chipyard/software/firemarshal/images/firechip/br-base/br-base.img`` - a disk image for
    the RISC-V SoC we will simulate
 
-These files will be used to form base images to either build more complicated
-workloads (see the :ref:`deprecated-defining-custom-workloads` section) or directly as a
-basic, interactive Linux distribution.
+이 파일들은 복잡한 workloads를 만들기 위한 기본 이미지 (참조: :ref:`deprecated-defining-custom-workloads` 섹션) 이거나 기본적이고, 상호작용 가능한 Linux 배포판으로 직접 사용될 수 있습니다.

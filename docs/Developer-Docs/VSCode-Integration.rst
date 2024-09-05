@@ -1,51 +1,38 @@
 Visual Studio Code Integration
 ------------------------------
 
-`VSCode <https://code.visualstudio.com/>`_ is a powerful IDE that can be used to do code and documentation
-development across the FireSim repository. It supports a client-server protocol
-over SSH that enables you to run a local GUI client that interacts with a server
-running on your remote manager.
-
+`VSCode <https://code.visualstudio.com/>`_ 는 FireSim 저장소 전반에 걸쳐 코드 및 문서를 개발할 수 있는 강력한 IDE입니다. SSH를 통해 클라이언트-서버 프로토콜을 지원하여 로컬 GUI 클라이언트가 원격 매니저에서 실행되는 서버와 상호작용할 수 있습니다.
 
 General Setup
 =============
 
-#. Install VSCode. You can grab installers `here <https://code.visualstudio.com/download>`_.
-#. Open VSCode and install the ``Remote Developer Plugin``. See the `marketplace page <https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack>`_ for a complete description of its features.
+#. VSCode를 설치합니다. 설치 프로그램은 ` 여기 <https://code.visualstudio.com/download>`_ 에서 받을 수 있습니다.
+#. VSCode를 열고 ``Remote Developer Plugin`` 을 설치합니다. 플러그인의 기능에 대한 완전한 설명은 `marketplace page <https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack>`_ 를 참조하세요.
 
-At this point, VSCode will read in your ``.ssh/config``. Hosts you've listed
-there will be listed under the ``Remote Explorer`` in the left sidebar. You'll
-be able to connect to these hosts and create workspaces under FireSim clones
-you've created there. You may need to give explicit names to hosts that would
-otherwise be captured as part of a pattern match or glob in your ssh config.
+이 지점에서 VSCode는 ``.ssh/config`` 파일을 읽습니다. 여기 나열된 호스트들이 좌측 사이드바의 ``Remote Explorer`` 에 표시됩니다. 이 호스트에 연결하고 여기에 만든 FireSim 클론 아래에서 작업 공간을 만들 수 있습니다. ssh 구성에서 패턴 매치 또는 glob의 일부로 캡처되는 호스트에는 명시적인 이름을 지정해야 할 수도 있습니다.
 
 Workspace Locations
 ===================
 
-Certain plugins assume the presence of certain files in particular locations,
-and often it is diserable to reduce the scope of files that VSCode will index.
-We recommend opening workspaces at the following locations:
+특정 플러그인은 특정 위치에 특정 파일이 있는 것을 전제로 하며, 종종 VSCode가 인덱스화할 파일의 범위를 줄이는 것이 바람직합니다. 다음 위치에서 작업 공간을 여는 것을 권장합니다:
 
- * Scala and C++ development: ``sim/``
- * RST docs: ``docs/``
+ * Scala 및 C++ 개발: ``sim/``
+ * RST 문서: ``docs/``
  * Manager (python): ``deploy/``
 
-You can always open a workspace at the root of FireSim -- just be cognizant that
-certain language-specific plugins (e.g., may not be configured correclty).
-
+항상 FireSim의 루트에서 작업 공간을 열 수 있지만, 특정 언어 전용 플러그인 (예: 제대로 구성되지 않을 수 있음)에 대해 인지해야 합니다.
 
 Scala Development
 =========================
 
-.. warning:: Until Chipyard is bumped, you must add bloop to Chipyard's ``plugins.sbt`` for this to work correctly. See :gh-file-ref:`sim/project/plugins.sbt` and copy the bloop installation into ``target-design/chipyard/project/plugins.sbt``.
-
-VSCode has rich support for Scala development, and the `Metals <https://scalameta.org/metals/docs/editors/vscode/>`_ plugin is really what makes the magic happen.
+.. warning:: Chipyard가 업데이트될 때까지, 이를 제대로 작동시키기 위해 Chipyard의 ``plugins.sbt`` 에 bloop을 추가해야 합니다. 참조: :gh-file-ref:`sim/project/plugins.sbt` 및 bloop 설치를 ``target-design/chipyard/project/plugins.sbt`` 에 복사합니다.
+VSCode는 Scala 개발을 위한 풍부한 지원을 제공하며, `Metals <https://scalameta.org/metals/docs/editors/vscode/>`_ 플러그인이 그 마법을 실현시킵니다.
 
 How To Use (Remote Manager)
 ###########################
 
-#. If you haven't already, clone FireSim and run ``build-setup.sh`` on your manager.
-#. Ensure your manager instance is listed as a host in your ``.ssh/config``. For example:
+#. 아직 하지 않았다면, FireSim을 클론하고 매니저에서 ``build-setup.sh`` 를 실행합니다.
+#. 매니저 인스턴스가 ``.ssh/config`` 에 호스트로 나열되어 있는지 확인합니다. 예:
    ::
 
     Host ec2-manager
@@ -53,34 +40,28 @@ How To Use (Remote Manager)
         IdentityFile ~/.ssh/<your-firesim.pem>
         Hostname <IP ADDR>
     
-#. In VSCode, using the ``Remote Manager`` on the left sidebar, connect to your manager instance.
-#. Open a workspace in your FireSim clone under ``sim/``.
-#. First time per remote: install the Metals plugin on the *remote* machine.
-#. Metals will prompt you with the following: "New SBT Workspace Detected, would you like to import the build?". Click *Import Build*.
+#. VSCode에서 왼쪽 사이드바의 ``Remote Manager`` 를 사용하여 매니저 인스턴스에 연결합니다.
+#. FireSim 클론의 ``sim/`` 아래에서 작업 공간을 엽니다.
+#. 원격당 최초 설치: 원격 머신에 Metals 플러그인을 설치합니다.
+#. Metals가 "새로운 SBT 작업 공간이 감지되었습니다. 빌드를 가져오시겠습니까?"라는 메시지를 표시합니다. *Import Build* 를 클릭합니다.
 
+이 시점에서 metals는 ``sim/`` 을 루트로 삼는 SBT 정의 빌드를 자동으로 가져오려 시도할 것입니다. 이 과정에는 다음이 포함됩니다:
 
-At this point, metals should automatically attempt to import the SBT-defined build rooted at ``sim/``. It will:
+#. SBT에 ``bloopInstall`` 을 실행하도록 요청합니다.
+#. bloop 빌드 서버를 실행합니다.
+#. FireSim의 기본 SBT 프로젝트에 대해 모든 scala 소스를 컴파일합니다.
 
-#. Call out to SBT to run ``bloopInstall``
-#. Spin up a bloop build server. 
-#. Compile all scala sources for the default SBT project in firesim. 
-
-Once this process is complete, autocompletion, jump to source, code lenses, and all that good stuff should work correctly.
+이 과정이 완료되면 자동 완성, 소스 코드 이동, 코드 렌즈 등 모든 좋은 기능이 제대로 작동할 것입니다.
 
 Limitations
 ###########
 
-#. **No test task support for ScalaTests that use make.** Due to the way
-   FireSim's ScalaTest calls out to make to invoke the generator and Golden Gate, Metals's bloop instance
-   must initialized with ``env.sh`` sourced. This will be resolved in a future PR. 
+#. **메이크를 사용하는 ScalaTests에 대한 테스트 작업 지원 없음.** FireSim의 ScalaTest가 제너레이터와 Golden Gate를 호출하기 위해 메이크를 사용하는 방식 때문에, Metals의 bloop 인스턴스는 ``env.sh`` 가 소싱된 상태로 초기화되어야 합니다. 이는 향후 PR에서 해결될 것입니다. 
 
 Other Notes
 ###########
 
-Reliance on SBT multi-project builds breaks the default metals integration. To hide this, we've put workspace-specific settings for metals in
-:gh-file-ref:`sim/.vscode/settings.json` which should permit metals to run correctly out of
-``sim/``. This instructs metals that:
+SBT 멀티 프로젝트 빌드 의존성은 기본 metals 통합을 방해합니다. 이를 숨기기 위해, FireSim과 Chipyard에서 플러그인으로 나열하여 bloop를 이미 설치했음을 metals에 지시하는 ``settings.json`` 파일을 :gh-file-ref:`sim/.vscode/settings.json` 에 넣어 metals가 ``sim/`` 에서 올바르게 실행되도록 하였습니다. 이는 다음을 지시합니다:
 
-#. We've already installed bloop (by listing it as a plugin in FireSim and Chipyard).
-#. It should use a different sbt launch command to run ``bloopInstall``. This
-   sources ``env.sh`` and uses the sbt-launcher provided by Chipyard.
+#. FireSim과 Chipyard에 bloop를 플러그인으로 나열하여 (bloop를) 이미 설치했습니다.
+#. ``bloopInstall`` 을 실행하기 위해 다른 sbt 실행 명령어를 사용해야 합니다. 즉, ``env.sh`` 를 소싱하고 Chipyard에서 제공하는 sbt 실행기를 사용합니다.

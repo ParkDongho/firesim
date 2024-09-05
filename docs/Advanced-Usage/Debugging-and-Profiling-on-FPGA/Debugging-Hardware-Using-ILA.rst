@@ -3,33 +3,25 @@
 AutoILA: Simple Integrated Logic Analyzer (ILA) Insertion
 ===================================================================
 
-Sometimes it takes too long to simulate FireSim on RTL simulators, and
-in some occasions we would also like to debug the simulation infrastructure
-itself. For these purposes, we can use the Xilinx Integrated Logic Analyzer
-resources on the FPGA.
+가끔 RTL 시뮬레이터에서 FireSim을 시뮬레이션하는 데 너무 오래 걸리는 경우가 있으며,
+또한 시뮬레이션 인프라 자체를 디버그하고 싶을 때도 있습니다. 이러한 목적을 위해, FPGA에서 Xilinx Integrated Logic Analyzer
+리소스를 사용할 수 있습니다.
 
-ILAs allows real time sampling of pre-selected signals during FPGA runtime,
-and provided and interface for setting trigger and viewing samples waveforms
-from the FPGA. For more information about ILAs, please refer to the Xilinx
-guide on the topic.
+ILAs는 FPGA 런타임 동안 사전 선택된 신호를 실시간으로 샘플링하며,
+트리거 설정 및 샘플 파형을 FPGA에서 보기 위한 인터페이스를 제공합니다. ILA에 대한 자세한 정보는
+주제에 대한 Xilinx 가이드를 참조하십시오.
 
-The ``midas.targetutils`` package provides annotations for labeling
-signals directly in the Chisel source. These will be consumed by a downstream
-FIRRTL pass which wires out the annotated signals, and binds them to an
-appropriately sized ILA instance.
+``midas.targetutils`` 패키지는 Chisel 소스에서 신호를 직접 레이블링하기 위한 주석을 제공합니다. 이는 후속 FIRRTL 패스에 의해 소비되며, 주석이 달린 신호를 연결하고 적절한 크기의 ILA 인스턴스에 바인딩합니다.
 
 Enabling AutoILA
 ----------------
 
-To enable AutoILA, mixin `WithAutoILA` must be prepended to the
-`PLATFORM_CONFIG`. Prior to version 1.13, this was done by default.
+AutoILA를 활성화하려면, `WithAutoILA` 믹스인을 `PLATFORM_CONFIG` 에 미리 추가해야 합니다. 버전 1.13 이전에는 기본적으로 이 작업이 수행되었습니다.
 
 Annotating Signals
 ------------------------
 
-In order to annotate a signal, we must import the
-``midas.targetutils.FpgaDebug`` annotator. FpgaDebug's apply method accepts a
-vararg of chisel3.Data. Invoke it as follows:
+신호에 주석을 달기 위해서는 ``midas.targetutils.FpgaDebug`` 주석기를 가져와야 합니다. FpgaDebug의 apply 메서드는 chisel3.Data의 vararg를 허용합니다. 다음과 같이 호출하십시오:
 
 .. code-block:: scala
 
@@ -41,23 +33,17 @@ vararg of chisel3.Data. Invoke it as follows:
        FpgaDebug(out1, in1)
     }
 
-You can annotate signals throughout FireSim, including in Golden Gate
-Rocket-Chip Chisel sources, with the only exception being the Chisel3 sources
-themselves (eg. in Chisel3.util.Queue).
+FireSim 전체에서 신호를 주석으로 달 수 있으며, Golden Gate Rocket-Chip Chisel 소스에서도 가능합니다. 단, Chisel3 소스 자체(예: Chisel3.util.Queue)에서는 예외입니다.
 
-Note: In case the module with the annotated signal is instantiated multiple times,
-all instatiations of the annotated signal will be wired to the ILA.
+참고: 주석이 달린 신호가 있는 모듈이 여러 번 인스턴스화된 경우, 주석이 달린 신호의 모든 인스턴스가 ILA에 연결됩니다.
 
 Setting a ILA Depth
 -------------------
 
-The ILA depth parameter specifies the duration in cycles to capture annotated signals
-around a trigger. Increasing this parameter may ease debugging, but will also increase
-FPGA resource utilization. The default depth is 1024 cycles. The desired depth can be
-configured much like the desired HostFrequency by appending a mixin to the
-`PLATFORM_CONFIG`. See :ref:`Generating-Different-Targets` for details on `PLATFORM_CONFIG`.
+ILA 깊이 파라미터는 트리거 주변에서 주석된 신호를 캡처하는 주기를 지정합니다.
+이 파라미터를 증가시키면 디버깅이 쉬워질 수 있지만, FPGA 리소스 사용량도 증가합니다. 기본 깊이는 1024 주기입니다. 원하는 깊이는 `PLATFORM_CONFIG` 에 믹스를 추가하여 구성할 수 있습니다. `PLATFORM_CONFIG` 에 대한 자세한 내용은 :ref:`Generating-Different-Targets` 를 참조하십시오.
 
-Below is an example `PLATFORM_CONFIG` that can be used in the `build_recipes` config file.
+아래는 `build_recipes` 구성 파일에서 사용할 수 있는 예시 `PLATFORM_CONFIG` 입니다.
 
 .. code-block:: bash
 
@@ -66,11 +52,11 @@ Below is an example `PLATFORM_CONFIG` that can be used in the `build_recipes` co
 Using the ILA at Runtime
 ------------------------
 
-Prerequisite: Make sure that ports 8443, 3121 and 10201 are enabled in the "firesim" AWS security group.
+전제 조건: "firesim" AWS 보안 그룹에서 포트 8443, 3121 및 10201이 활성화되어 있는지 확인하십시오.
 
-In order to use the ILA, we must enable the GUI interface on our manager instance.
-In the past, AWS had a custom ``setup_gui.sh`` script. However, this was recently deprecated due to compatibility
-issues with various packages. Therefore, AWS currently recommends using `NICE DCV <https://docs.aws.amazon.com/dcv/latest/adminguide/what-is-dcv.html>`__ as a GUI client. You should `download a DCV client <https://docs.aws.amazon.com/dcv/latest/userguide/client.html>`__, and then run the following commands on your FireSim manager instance:
+ILA를 사용하기 위해, 관리자 인스턴스에서 GUI 인터페이스를 활성화해야 합니다.
+과거에는 AWS가 사용자 정의 ``setup_gui.sh`` 스크립트를 제공했으나, 호환성 문제로 최근에 폐지되었습니다.
+따라서 현재 AWS는 GUI 클라이언트로 `NICE DCV <https://docs.aws.amazon.com/dcv/latest/adminguide/what-is-dcv.html>`__ 사용을 권장합니다. `DCV 클라이언트를 다운로드 <https://docs.aws.amazon.com/dcv/latest/userguide/client.html>`__ 한 다음, FireSim 관리자 인스턴스에서 다음 명령을 실행하십시오:
 
 .. code-block:: bash
 
@@ -88,16 +74,13 @@ issues with various packages. Therefore, AWS currently recommends using `NICE DC
   sudo systemctl stop firewalld
   dcv create-session --type virtual --user centos centos
 
-These commands will setup Linux desktop pre-requisites, install the NICE DCV server, ask you to setup the password to the ``centos`` user, disable firewalld,
-and finally create a DCV session. You can now connect to this session through the DCV client.
+이 명령은 Linux 데스크톱 전제 조건을 설치하고, NICE DCV 서버를 설치하고, ``centos`` 사용자의 비밀번호를 설정하도록 요청하며, firewalld를 비활성화하고,
+마지막으로 DCV 세션을 생성합니다. 이제 DCV 클라이언트를 통해 이 세션에 연결할 수 있습니다.
 
-After access the GUI interface, open a terminal, and open ``vivado``.
-Follow the instructions in the `AWS-FPGA guide for connecting xilinx hardware manager on vivado (running on a remote machine) to the debug target  <https://github.com/aws/aws-fpga/blob/master/hdk/docs/Virtual_JTAG_XVC.md#connecting-xilinx-hardware-manager-vivado-lab-edition-running-on-a-remote-machine-to-the-debug-target-fpga-enabled-ec2-instance>`__ .
+GUI 인터페이스에 액세스한 후, 터미널을 열고 ``vivado`` 를 실행하십시오.
+`AWS-FPGA 가이드에서 Xilinx 하드웨어 매니저를 vivado (원격 머신에서 실행 중)로 연결하는 방법 <https://github.com/aws/aws-fpga/blob/master/hdk/docs/Virtual_JTAG_XVC.md#connecting-xilinx-hardware-manager-vivado-lab-edition-running-on-a-remote-machine-to-the-debug-target-fpga-enabled-ec2-instance>`__ 의 지침을 따르십시오.
 
-where ``<hostname or IP address>`` is the internal IP of the simulation instance (not
-the manager instance. i.e. The IP starting with 192.168.X.X).
-The probes file can be found in the manager instance under the path
-``firesim/deploy/results-build/<build_identifier>/cl_firesim/build/checkpoints/<probes_file.ltx>``
+여기서 ``<hostname or IP address>`` 는 시뮬레이션 인스턴스의 내부 IP(관리자 인스턴스가 아님, 즉 192.168.X.X로 시작하는 IP)입니다.
+probes 파일은 관리자 인스턴스의 경로 ``firesim/deploy/results-build/<build_identifier>/cl_firesim/build/checkpoints/<probes_file.ltx>`` 에서 찾을 수 있습니다.
 
-Select the ILA with the description of `WRAPPER_INST/CL/CL_FIRESIM_DEBUG_WIRING_TRANSFORM`, and you may now use the ILA just as if it was on
-a local FPGA.
+설명에 `WRAPPER_INST/CL/CL_FIRESIM_DEBUG_WIRING_TRANSFORM` 이 있는 ILA를 선택하면 로컬 FPGA에서 사용하듯이 ILA를 사용할 수 있습니다.

@@ -7,27 +7,16 @@ Some keys specified in ``config_hwdb.yaml`` may be specified as a ``URI``
 
 ``URI Support``
 --------------------------
-A Uniform Resource Identifier (URI) which specifies a protocol supported either `directly by the fsspec library <https://filesystem-spec.readthedocs.io/en/latest/api.html#built-in-implementations>`_ or by `one of the many third party extension libraries which build on fsspec. <https://filesystem-spec.readthedocs.io/en/latest/api.html#other-known-implementations>`_
+Uniform Resource Identifier (URI) 는 `fsspec 라이브러리 <https://filesystem-spec.readthedocs.io/en/latest/api.html#built-in-implementations>`_ 에서 직접 지원하거나, `fsspec 위에 구축된 많은 서드 파티 확장 라이브러리 중 하나 <https://filesystem-spec.readthedocs.io/en/latest/api.html#other-known-implementations>`_ 에서 지원하는 프로토콜을 명시하는 것입니다.
 
-Please note that while use use the ``fsspec`` library to handle many different URI protocols, many
-of them require additional dependencies that FireSim itself does not require you to install.
-``fsspec`` will throw an exception telling you to install missing packages if you use one of the
-many URI protocols we do not test.
+많은 다른 URI 프로토콜을 처리하기 위해 ``fsspec`` 라이브러리를 사용할 때, 그 중 많은 것들이 FireSim 자체에서 설치를 요구하지 않는 추가 종속성을 필요로 한다는 점을 유의하십시오. ``fsspec`` 은 우리가 테스트하지 않는 많은 URI 프로토콜 중 하나를 사용할 경우, 필요한 패키지를 설치하라는 예외를 던질 것입니다.
 
-Likewise, individual URI protocols will have their own requirements for specifying credentials.
-Documentation supplying credentials is provided by the individual protocol implementation.  For
-example:
+마찬가지로, 개별 URI 프로토콜은 자격 증명을 명시하기 위한 고유한 요구 사항을 가집니다. 자격 증명을 제공하는 문서는 개별 프로토콜 구현에서 제공합니다. 예를 들어:
 
-* `adlfs for Azure Data-Lake Gen1 and Gen2 <https://github.com/fsspec/adlfs#details>`_
-* `gcfs for Google Cloud Services <https://gcsfs.readthedocs.io/en/latest/#credentials>`_
-* `s3fs for AWS S3 <https://s3fs.readthedocs.io/en/latest/#credentials>`_
+* `Azure Data-Lake Gen1 및 Gen2를 위한 adlfs <https://github.com/fsspec/adlfs#details>`_
+* `Google Cloud Services를 위한 gcfs <https://gcsfs.readthedocs.io/en/latest/#credentials>`_
+* `AWS S3를 위한 s3fs <https://s3fs.readthedocs.io/en/latest/#credentials>`_
 
-For SSH, add any required keys to your ssh-agent.
+SSH의 경우, 필요한 키를 ssh-agent에 추가하십시오.
 
-Please note that while some protocol backendss provide authentication via their own configuration
-files or environment variables (e.g. AWS credentials stored in ``~/.aws``, created by ``aws
-configure``), one can additionally configure ``fsspec`` with additional default keyword arguments
-per backend protocol by using one of the `fsspec configuration
-<https://filesystem-spec.readthedocs.io/en/latest/features.html#configuration>`_ methods.
-
-
+일부 프로토콜 백엔드가 자체 구성 파일이나 환경 변수(예: ``~/.aws`` 에 저장된 AWS 자격 증명, ``aws configure`` 로 생성)를 통해 인증을 제공하는 반면, 하나는 추가 기본 키워드 인수로 ``fsspec`` 을 각 백엔드 프로토콜에 따라 구성할 수 있는 `fsspec 구성 <https://filesystem-spec.readthedocs.io/en/latest/features.html#configuration>`_ 방법 중 하나를 사용할 수 있음을 유의하십시오.

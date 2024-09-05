@@ -11,13 +11,13 @@ by the manager.
 ``FIRESIM_RUNFARM_PREFIX``
 --------------------------
 
-This environment variable is used to prefix all Run Farm tags with some prefix in the AWS EC2 case.
-This is useful for separating run farms between multiple copies of FireSim.
+이 환경 변수는 AWS EC2의 경우 모든 Run Farm 태그에 일부 접두사를 추가하는 데 사용됩니다.
+이는 여러 FireSim 복사본 간의 Run Farm을 분리하는 데 유용합니다.
 
 .. _buildfarm-prefix:
 
 ``FIRESIM_BUILDFARM_PREFIX``
 ----------------------------
 
-This environment variable is used to prefix all Build Farm tags with some prefix in the AWS EC2 case.
-This is mainly for CI use only.
+이 환경 변수는 AWS EC2의 경우 모든 Build Farm 태그에 일부 접두사를 추가하는 데 사용됩니다.
+이는 주로 CI 용도로만 사용됩니다.

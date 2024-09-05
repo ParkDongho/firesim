@@ -25,216 +25,186 @@ Below, we outline each mapping in detail.
 ``run_farm``
 ^^^^^^^^^^^^^^^^^^^
 
-The ``run_farm`` mapping specifies the characteristics of your FireSim run farm so that the
-manager can automatically launch them, run workloads on them, and terminate
-them.
+``run_farm`` 매핑은 FireSim run farm의 특성을 지정하여 매니저가 이를 자동으로 시작, 워크로드 실행, 종료할 수 있도록 합니다.
 
 ``base_recipe``
 """""""""""""""
 
-The ``base_recipe`` key/value pair specifies the default set of arguments to use for a particular run farm type.
-To change the run farm type, a new ``base_recipe`` file must be provided from ``deploy/run-farm-recipes``.
-You are able to override the arguments given by a ``base_recipe`` by adding keys/values to the ``recipe_arg_overrides`` mapping.
+``base_recipe`` 키/값 쌍은 특정 run farm 타입에 사용할 기본 인수 집합을 지정합니다.
+run farm 타입을 변경하려면, ``deploy/run-farm-recipes`` 에서 새로운 ``base_recipe`` 파일을 제공해야 합니다.
+``recipe_arg_overrides`` 매핑에 키/값을 추가하여 ``base_recipe`` 에서 제공된 인수를 재정의할 수 있습니다.
 
 ``recipe_arg_overrides``
 """"""""""""""""""""""""
 
-This optional mapping of keys/values allows you to override the default arguments provided by the ``base_recipe``.
-This mapping must match the same mapping structure as the ``args`` mapping within the ``base_recipe`` file given.
-Overridden arguments override recursively such that all key/values present in the override args replace the default arguments given
-by the ``base_recipe``. In the case of sequences, a overridden sequence completely replaces the corresponding sequence in the default args.
-Additionally, it is not possible to change the default run farm type through these overrides.
-This must be done by changing the default ``base_recipe``.
+이 선택적 매핑 키/값은 ``base_recipe`` 에서 제공된 기본 인수를 재정의할 수 있게 합니다.
+이 매핑은 제공된 ``base_recipe`` 파일 내의 ``args`` 매핑과 동일한 매핑 구조를 일치시켜야 합니다.
+재정의된 인수는 재귀적으로 기본 인수를 대체하며, 시퀀스의 경우 재정의된 시퀀스는 기본 인수의 해당 시퀀스를 완전히 대체합니다.
+또한, 이러한 재정의를 통해 기본 run farm 타입을 변경할 수 없습니다.
+이는 기본 ``base_recipe`` 를 변경하여 수행해야 합니다.
 
-See :ref:`run-farm-recipe` for more details on the potential run farm recipes that can be used.
+사용할 수 있는 run farm recipes에 대한 자세한 내용은 :ref:`run-farm-recipe` 를 참조하십시오.
 
 ``metasimulation``
 ^^^^^^^^^^^^^^^^^^
 
-The ``metasimulation`` options below allow you to run metasimulations
-instead of FPGA simulations when doing ``launchrunfarm``, ``infrasetup``, and ``runworkload``.
-See :ref:`metasimulation` for more details.
+아래의 ``metasimulation`` 옵션을 통해 ``launchrunfarm``, ``infrasetup`` 및 ``runworkload`` 를 실행할 때 FPGA 시뮬레이션 대신 메타시뮬레이션을 실행할 수 있습니다.
+자세한 내용은 :ref:`metasimulation` 을 참조하십시오.
 
 ``metasimulation_enabled``
 """""""""""""""""""""""""""""
 
-This is a boolean to enable running metasimulations in-place of FPGA-accelerated simulations.
-The number of metasimulations that are run on a specific Run Farm host is determined by the ``num_metasims`` argument
-in each run farm recipe (see :ref:`run-farm-recipe`).
+이는 FPGA 가속 시뮬레이션 대신 메타시뮬레이션을 실행하도록 하는 boolean 설정입니다.
+특정 Run Farm 호스트에서 실행되는 메타시뮬레이션의 수는 각 run farm 레시피의 ``num_metasims`` 인수에 의해 결정됩니다 (참조 :ref:`run-farm-recipe`).
 
 ``metasimulation_host_simulator``
 """"""""""""""""""""""""""""""""""
 
-This key/value pair chooses which RTL simulator should be used for metasimulation.
-Options include ``verilator`` and ``vcs`` if waveforms are unneeded and ``*-debug`` versions
-if a waveform is needed.
+이 키/값 쌍은 메타시뮬레이션에 사용할 RTL 시뮬레이터를 선택합니다.
+옵션에는 ``verilator`` 및 파형이 필요 없는 경우 ``vcs`` 와 파형이 필요한 경우 ``*-debug`` 버전이 포함됩니다.
 
 ``metasimulation_only_plusargs``
 """"""""""""""""""""""""""""""""""
 
-This key/value pair is a string that passes plusargs (arguments with a ``+`` in front) to the metasimulations.
+이 키/값 쌍은 메타시뮬레이션에 plusargs(``+`` 로 시작하는 인수)를 전달하는 문자열입니다.
 
 ``metasimulation_only_vcs_plusargs``
 """""""""""""""""""""""""""""""""""""
 
-This key/value pair is a string that passes plusargs (arguments with a ``+`` in front) to metasimulations using ``vcs`` or ``vcs-debug``.
+이 키/값 쌍은 ``vcs`` 또는 ``vcs-debug`` 를 사용하는 메타시뮬레이션에 plusargs를 전달하는 문자열입니다.
 
 ``target_config``
 ^^^^^^^^^^^^^^^^^^^
 
-The ``target_config`` options below allow you to specify the high-level
-configuration of the target you are simulating. You can change these parameters
-after launching a Run Farm (assuming you have the correct number of instances),
-but in many cases you will need to re-run the ``infrasetup`` command to make
-sure the correct simulation infrastructure is available on your instances.
+아래의 ``target_config`` 옵션을 사용하여 시뮬레이션 대상의 고급 구성을 지정할 수 있습니다.
+Run Farm을 시작한 후 이러한 매개변수를 변경할 수 있지만 
+(필요한 인스턴스 수가 맞는 경우), 많은 경우 인스턴스에 올바른 시뮬레이션 인프라가 사용 가능하도록 하려면
+``infrasetup`` 명령을 다시 실행해야 합니다.
 
 ``topology``
 """""""""""""""""""""""""""""
 
-This field dictates the network topology of the simulated system. Some examples:
+이 필드는 시뮬레이션된 시스템의 네트워크 토폴로지를 결정합니다. 몇 가지 예:
 
-``no_net_config``: This runs N (see ``no_net_num_nodes`` below) independent
-simulations, without a network simulation. You can currently only use this
-option if you build one of the NoNIC hardware configs of FireSim.
+``no_net_config``: 네트워크 시뮬레이션 없이 N(아래의 ``no_net_num_nodes`` 참조)개의 독립된 시뮬레이션을 실행합니다. 
+이 옵션은 현재 FireSim의 NoNIC 하드웨어 구성을 빌드하는 경우에만 사용할 수 있습니다.
 
-``example_8config``: This requires a single ``f1.16xlarge``, which will
-simulate 1 ToR switch attached to 8 simulated servers.
+``example_8config``: 이는 8개의 시뮬레이션된 서버에 연결된 1개의 ToR 스위치를 시뮬레이트하여 단일 ``f1.16xlarge`` 가 필요합니다.
 
-``example_16config``: This requires two ``f1.16xlarge`` instances and one
-``m4.16xlarge`` instance, which will
-simulate 2 ToR switches, each attached to 8 simulated servers, with the two
-ToR switches connected by a root switch.
+``example_16config``: 이는 2개의 ToR 스위치 각각 8개의 시뮬레이션된 서버에 연결되고 두 ToR 스위치가 루트 스위치로 연결된 
+두 ``f1.16xlarge`` 인스턴스와 하나의 ``m4.16xlarge`` 인스턴스가 필요합니다.
 
-``example_64config``: This requires eight ``f1.16xlarge`` instances and one
-``m4.16xlarge`` instance, which will simulate 8 ToR switches, each attached to
-8 simulated servers (for a total of 64 nodes), with the eight ToR switches
-connected by a root switch.
+``example_64config``: 이는 8개의 ToR 스위치 각각 8개의 시뮬레이션된 서버(총 64개 노드)에 연결되고 8개의 ToR 스위치가 
+루트 스위치로 연결된 8개의 ``f1.16xlarge`` 인스턴스와 하나의 ``m4.16xlarge`` 인스턴스가 필요합니다.
 
-Additional configurations are available in ``deploy/runtools/user_topology.py``
-and more can be added there. See the :ref:`usertopologies` section
-for more info.
+추가 구성은 ``deploy/runtools/user_topology.py`` 에서 사용할 수 있으며 여기에 더 추가할 수 있습니다. 자세한 내용은 :ref:`usertopologies` 섹션을 참조하십시오.
 
 ``no_net_num_nodes``
 """""""""""""""""""""""""""""
 
-This determines the number of simulated nodes when you are using
-``topology: no_net_config``.
+이는 ``topology: no_net_config`` 를 사용하는 경우 시뮬레이션된 노드의 수를 결정합니다.
 
 ``link_latency``
 """""""""""""""""
 
-In a networked simulation, this allows you to specify the link latency of the
-simulated network in CYCLES. For example, 6405 cycles is roughly 2 microseconds
-at 3.2 GHz. A current limitation is that this value (in cycles) must be
-a multiple of 7. Furthermore, you must not exceed the buffer size specified
-in the NIC's simulation widget.
+네트워크 시뮬레이션에서 이는 시뮬레이션된 네트워크의 링크 지연 시간을 
+CYCLES 단위로 지정할 수 있습니다. 예를 들어, 6405 사이클은 3.2GHz에서 약 2마이크로초에 해당합니다. 
+현재 제한 사항은 이 값(사이클 단위)이 7의 배수여야 한다는 것입니다. 
+또한 NIC의 시뮬레이션 위젯에 지정된 버퍼 크기를 초과해서는 안 됩니다.
 
 ``switching_latency``
 """"""""""""""""""""""
 
-In a networked simulation, this specifies the minimum port-to-port switching
-latency of the switch models, in CYCLES.
+네트워크 시뮬레이션에서 이는 스위치 모델의 포트 간 최소 포트 간 지연 시간을 CYCLES 단위로 지정합니다.
 
 ``net_bandwidth``
 """"""""""""""""""""""
 
-In a networked simulation, this specifies the maximum output bandwidth that a
-NIC is allowed to produce as an integer in Gbit/s. Currently, this must be a
-number between 1 and 200, allowing you to model NICs between 1 and 200 Gbit/s.
+네트워크 시뮬레이션에서 이는 NIC가 허용하는 최대 출력 대역폭을 Gbit/s 단위의 정수로 지정합니다. 
+현재 이 값은 1에서 200 사이의 숫자여야 하며, 이를 통해 1에서 200 Gbit/s 사이의 NIC를 모델링할 수 있습니다.
 
 ``profile_interval``
 """""""""""""""""""""""""""""
 
-The simulation driver periodically samples performance counters in FASED timing model instances and dumps the result to a file on the host.
-``profile_interval`` defines the number of target cycles between samples; setting this field to -1 disables polling.
+시뮬레이션 드라이버는 주기적으로 FASED 타이밍 모델 인스턴스에서 성능 카운터를 샘플링하고 호스트에 결과를 파일로 덤프합니다.
+``profile_interval`` 은 샘플 간격의 대상 사이클 수를 정의합니다. 이 값을 -1로 설정하면 폴링이 비활성화됩니다.
 
 
 ``default_hw_config``
 """""""""""""""""""""""""""""
 
-This sets the server configuration launched by default in the above topologies.
-Heterogeneous configurations can be achieved by manually specifying different
-names within the topology itself, but all the ``example_Nconfig`` configurations
-are homogeneous and use this value for all nodes.
+이는 위의 토폴로지에서 기본적으로 시작되는 서버 구성을 설정합니다.
+이기종 구성은 토폴로지 내에서 다른 이름을 수동으로 지정하여 달성할 수 있지만, 
+모든 ``example_Nconfig`` 구성은 동질적이며 모든 노드에 대해 이 값을 사용합니다.
 
-You should set this to one of the hardware configurations you have defined already in
-``config_hwdb.yaml``.  You should set this to the NAME (mapping title) of the
-hardware configuration from ``config_hwdb.yaml``, NOT the actual AGFI or ``bitstream_tar`` itself
-(NOT something like ``agfi-XYZ...``).
-
+이를 ``config_hwdb.yaml`` 에 이미 정의된 하드웨어 구성 중 하나로 설정해야 합니다.
+이를 ``config_hwdb.yaml`` 의 하드웨어 구성의 NAME(매핑 제목)으로 설정해야 합니다. 실제 AGFI 또는 ``bitstream_tar`` 자체는 아닙니다.
+(예: ``agfi-XYZ...`` 와 같은 값X)
 
 ``tracing``
 ^^^^^^^^^^^^^^^^^^^
 
-This section manages TracerV-based tracing at simulation runtime. For more
-details, see the :ref:`tracerv` page for more details.
+이 섹션은 시뮬레이션 실행 중 TracerV 기반 추적을 관리합니다. 자세한 내용은 :ref:`tracerv` 페이지를 참조하십시오.
 
 ``enable``
 """"""""""""""""""
 
-This turns tracing on, when set to ``yes`` and off when set to ``no``. See the :ref:`tracerv-enabling`.
+이는 추적을 ``yes`` 로 설정하면 켜지고 ``no`` 로 설정하면 꺼집니다. 자세한 내용은 :ref:`tracerv-enabling`.
 
 ``output_format``
 """"""""""""""""""""
 
-This sets the output format for TracerV tracing. See the :ref:`tracerv-output-format` section.
+이것은 TracerV 추적의 출력 형식을 설정합니다. 자세한 내용은 :ref:`tracerv-output-format` 섹션을 참조하십시오.
 
 ``selector``, ``start``, and ``end``
 """""""""""""""""""""""""""""""""""""
 
-These configure triggering for TracerV. See the :ref:`tracerv-trigger` section.
-
+이들은 TracerV 트리거를 구성합니다. 자세한 내용은 :ref:`tracerv-trigger` 섹션을 참조하십시오.
 
 ``autocounter``
 ^^^^^^^^^^^^^^^^^^^^^
 
-This section configures AutoCounter. See the :ref:`autocounter` page for more details.
+이 섹션은 AutoCounter를 구성합니다. 자세한 내용은 :ref:`autocounter` 페이지를 참조하십시오.
 
 ``read_rate``
 """""""""""""""""
 
-This sets the rate at which AutoCounters are read. See the :ref:`autocounter-runtime-parameters` section for more details.
+이는 AutoCounter가 읽히는 속도를 설정합니다. 자세한 내용은 :ref:`autocounter-runtime-parameters` 섹션을 참조하십시오.
 
 
 ``workload``
 ^^^^^^^^^^^^^^^^^^^
 
-This section defines the software that will run on the simulated system.
+이 섹션은 시뮬레이션된 시스템에서 실행될 소프트웨어를 정의합니다.
 
 ``workload_name``
 """""""""""""""""
 
-This selects a workload to run across the set of simulated nodes.
-A workload consists of a series of jobs that need to be run on simulated
-nodes (one job per node).
+이는 시뮬레이션된 노드 집합에서 실행할 워크로드를 선택합니다.
+워크로드는 시뮬레이션된 노드(노드당 하나의 작업)에서 실행해야 하는 일련의 작업으로 구성됩니다.
 
-Workload definitions are located in ``firesim/deploy/workloads/*.json``.
+워크로드 정의는 ``firesim/deploy/workloads/*.json`` 에 있습니다.
 
-Some sample workloads:
+몇 가지 샘플 워크로드:
 
-``br-base-uniform.json``: This runs the default FireSim Linux distro on as many nodes
-as you specify when setting the ``target_config`` parameters.
+``br-base-uniform.json``: 이는 ``target_config`` 매개변수를 설정할 때 지정한 
+수만큼 기본 FireSim Linux 배포판을 실행합니다.
 
-Others can be found in the aforementioned directory. For a description of the
-JSON format, see :ref:`deprecated-defining-custom-workloads`.
-
+기타는 위의 디렉토리에서 찾을 수 있습니다. JSON 형식에 대한 설명은 :ref:`deprecated-defining-custom-workloads` 를 참조하십시오.
 
 ``terminate_on_completion``
 """""""""""""""""""""""""""
 
-Set this to ``no`` if you want your Run Farm to keep running once the workload
-has completed. Set this to ``yes`` if you want your Run Farm to be TERMINATED
-after the workload has completed and results have been copied off.
+워크로드가 완료된 후 Run Farm을 계속 실행하려면 이를 ``no`` 로 설정하십시오. 
+워크로드가 완료되고 결과가 복사된 후 Run Farm을 종료하려면 ``yes`` 로 설정하십시오.
 
 ``suffix_tag``
 """"""""""""""""""""""""""
 
-This allows you to append a string to a workload's output directory name,
-useful for differentiating between successive runs of the same workload,
-without renaming the entire workload. For example, specifying
-``suffix_tag: test-v1`` with a workload named ``super-application`` will result
-in a workload results directory named
-``results-workload/DATE--TIME-super-application-test-v1/``.
+이는 동일한 워크로드의 연속 실행을 구별하는 데 유용한 워크로드의 출력 디렉토리 이름에 문자열을 추가할 수 있습니다. 
+예를 들어, ``suffix_tag: test-v1`` 을 ``super-application`` 이라는 워크로드에 지정하면 다음과 같은 
+워크로드 결과 디렉토리가 생성됩니다. 
+이름: ``results-workload/DATE--TIME-super-application-test-v1/``.
 
 ``host_debug``
 ^^^^^^^^^^^^^^^^^^
@@ -242,17 +212,15 @@ in a workload results directory named
 ``zero_out_dram``
 """""""""""""""""""""""""""""
 
-Set this to ``yes`` to zero-out FPGA-attached DRAM before simulation begins.
-This process takes 2-5 minutes. In general, this is not required to produce
-deterministic simulations on target machines running linux, but should be
-enabled if you observe simulation non-determinism.
+이를 ``yes`` 로 설정하면 시뮬레이션이 시작되기 전에 FPGA에 연결된 DRAM를 초기화합니다.
+이 과정은 2-5분 정도 소요됩니다. 일반적으로 이는 타겟 머신에서 리눅스를 실행하는
+결정론적 시뮬레이션을 생성하는 데 필요하지 않지만, 시뮬레이션 비결정론이 발생하는 경우 활성화해야 합니다.
 
 ``disable_synth_asserts``
 """""""""""""""""""""""""""""
 
-Set this to ``yes`` to make the simulation ignore synthesized assertions when
-they fire. Otherwise, simulation will print the assertion message and terminate
-when an assertion fires.
+이를 ``yes`` 로 설정하면 시뮬레이션이 합성된 어설션을 무시합니다.
+그렇지 않은 경우, 어설션이 발생하면 시뮬레이션이 어설션 메시지를 출력하고 종료합니다.
 
 
 .. _config-build:
@@ -270,35 +238,31 @@ Below, we outline each mapping in detail.
 ``build_farm``
 ^^^^^^^^^^^^^^^^^^^
 
-In this section, you specify the specific build farm configuration that you wish to use to build FPGA bitstreams.
+이 섹션에서는 FPGA 비트스트림을 빌드하는 데 사용할 특정 빌드 팜 구성을 지정합니다.
 
 ``base_recipe``
 """""""""""""""
 
-The ``base_recipe`` key/value pair specifies the default set of arguments to use for a particular build farm type.
-To change the build farm type, a new ``base_recipe`` file must be provided from ``deploy/build-farm-recipes``.
-You are able to override the arguments given by a ``base_recipe`` by adding keys/values to the ``recipe_arg_overrides`` mapping.
+``base_recipe`` 키/값 쌍은 특정 빌드 팜 타입에 사용할 기본 인수 집합을 지정합니다.
+빌드 팜 타입을 변경하려면, ``deploy/build-farm-recipes`` 에서 새로운 ``base_recipe`` 파일을 제공해야 합니다.
+``recipe_arg_overrides`` 매핑에 키/값을 추가하여 ``base_recipe`` 에서 제공된 인수를 재정의할 수 있습니다.
 
-See :ref:`build-farm-recipe` for more details on the potential build farm recipes that can be used.
+사용할 수 있는 빌드 팜 recipes에 대한 자세한 내용은 :ref:`build-farm-recipe` 를 참조하십시오.
 
 ``recipe_arg_overrides``
 """"""""""""""""""""""""
 
-This optional mapping of keys/values allows you to override the default arguments provided by the ``base_recipe``.
-This mapping must match the same mapping structure as the ``args`` mapping within the ``base_recipe`` file given.
-Overridden arguments override recursively such that all key/values present in the override args replace the default arguments given
-by the ``base_recipe``. In the case of sequences, a overridden sequence completely replaces the corresponding sequence in the default args.
-Additionally, it is not possible to change the default build farm type through these overrides.
-This must be done by changing the default ``base_recipe``.
+이 선택적 매핑 키/값은 ``base_recipe`` 에서 제공된 기본 인수를 재정의할 수 있게 합니다.
+이 매핑은 제공된 ``base_recipe`` 파일 내의 ``args`` 매핑과 동일한 매핑 구조를 일치시켜야 합니다.
+재정의된 인수는 재귀적으로 기본 인수를 대체하며, 시퀀스의 경우 재정의된 시퀀스는 기본 인수의 해당 시퀀스를 완전히 대체합니다.
+또한, 이러한 재정의를 통해 기본 빌드 팜 타입을 변경할 수 없습니다.
+이는 기본 ``base_recipe`` 를 변경하여 수행해야 합니다.
 
 ``builds_to_run``
 ^^^^^^^^^^^^^^^^^^^^^
 
-In this section, you can list as many build entries as you want to run
-for a particular call to the ``buildbitstream`` command (see
-:ref:`config-build-recipes` below for how to define a build entry). For
-example, if we want to run the builds named ``awesome_firesim_config`` and ``quad_core_awesome_firesim_config``, we would
-write:
+이 섹션에서는 ``buildbitstream`` 명령을 호출할 때 실행할 원하는 빌드 항목을 여러 개 나열할 수 있습니다. 
+예를 들어, ``awesome_firesim_config`` 와 ``quad_core_awesome_firesim_config`` 라는 빌드를 실행하려면 다음과 같이 작성합니다. 
 
 .. code-block:: yaml
 
@@ -312,10 +276,9 @@ write:
 
 .. Note:: This is only used in the AWS EC2 case.
 
-This is used by the ``shareagfi`` command to share the specified agfis with the
-users specified in the next (``share_with_accounts``) section. In this section,
-you should specify the section title (i.e. the name you made up) for a hardware
-configuration in ``config_hwdb.yaml``. For example, to share the hardware config:
+이는 ``shareagfi`` 명령을 사용하여 특정 사용자와 지정된 agfi를 공유하는 데 사용됩니다
+다음( ``share_with_accounts``) 섹션에 나와 있습니다. 이 섹션에서는 하드웨어 구성을 ``config_hwdb.yaml`` 에서 섹션 제목(즉, 사용자가 만든 이름)으로 지정해야 합니다.
+다음과 같은 하드웨어 구성을 공유하려면:
 
 .. code-block:: yaml
 
@@ -325,7 +288,7 @@ configuration in ``config_hwdb.yaml``. For example, to share the hardware config
         deploy_quintuplet_override: null
         custom_runtime_config: null
 
-you would use:
+여기서 다음과 같이 사용해야 합니다:
 
 .. code-block:: yaml
 
@@ -338,10 +301,9 @@ you would use:
 
 .. Note:: This is only used in the AWS EC2 case.
 
-A list of AWS account IDs that you want to share the AGFIs listed in
-``agfis_to_share`` with when calling the manager's ``shareagfi`` command. You
-should specify names in the form ``usersname: AWSACCTID``. The left-hand-side is
-just for human readability, only the actual account IDs listed here matter. If you specify ``public: public`` here, the AGFIs are shared publicly, regardless of any other entires that are present.
+``agfis_to_share`` 에 나와 있는 AGFI를 매니저의 ``shareagfi`` 명령을 호출할 때 공유할 AWS 계정 ID의 목록을 나열합니다.
+이를 ``usersname: AWSACCTID`` 형식의 이름으로 지정해야 합니다. 왼쪽은 독자적 가독성을 위한 것이며, 여기 나열된 실제 계정 ID만 중요합니다.
+여기에 ``public: public`` 을 지정하면 여기에 있는 다른 항목과 관계없이 AGFI가 공개적으로 공유됩니다.
 
 .. _config-build-recipes:
 
@@ -359,610 +321,42 @@ Below, we outline each section and parameter in detail.
 Build definition sections, e.g. ``awesome_firesim_config``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-In this file, you can specify as many build definition sections as you want,
-each with a header like ``awesome_firesim_config`` (i.e. a nice, short name
-you made up). Such a section must contain the following fields:
+이 파일에서는 원하는 만큼의 빌드 정의 섹션을 지정할 수 있으며, 각각 ``awesome_firesim_config`` 와 같은 헤더를 가집니다
+(즉, 사용자가 만든 멋지고 짧은 이름). 이와 같은 섹션에는 다음 필드를 포함해야 합니다:
 
 ``DESIGN``
 """""""""""""""""""""""""""""
 
-This specifies the basic target design that will be built. Unless you
-are defining a custom system, this should be set to ``FireSim``.
-We describe this in greater detail in :ref:`Generating Different
-Targets<generating-different-targets>`).
+이는 빌드할 기본 타겟 디자인을 지정합니다. 사용자 정의 시스템을 정의하지 않으면
+이는 ``FireSim`` 으로 설정해야 합니다.
+자세한 내용은 :ref:`Generating Different
+Targets<generating-different-targets>` 을 참조하십시오.
 
 ``TARGET_CONFIG``
 """""""""""""""""""
 
-This specifies the hardware configuration of the target being simulated. Some
-examples include ``FireSimRocketConfig`` and ``FireSimQuadRocketConfig``.
-We describe this in greater detail in :ref:`Generating Different
-Targets<generating-different-targets>`).
+이는 시뮬레이션 대상의 하드웨어 구성을 지정합니다.
+몇 가지 예로는 ``FireSimRocketConfig`` 와 ``FireSimQuadRocketConfig`` 등이 있습니다.
+자세한 내용은 :ref:`Generating Different
+Targets<generating-different-targets>` 을 참조하십시오.
 
 
 ``PLATFORM_CONFIG``
 """""""""""""""""""""
 
-This specifies parameters to pass to the compiler (Golden Gate). Notably,
-PLATFORM_CONFIG can be used to enable debugging tools like assertion synthesis,
-and resource optimizations like instance multithreading.  Critically, it also
-calls out the host-platform (e.g., F1) to compile against: this
-defines the widths of internal simulation interfaces and specifies resource
-limits (e.g., how much DRAM is available on the platform).
+이는 컴파일러(Golden Gate)에 전달할 매개변수를 지정합니다. 
+특히, PLATFORM_CONFIG는 어설션 합성 및 인스턴스 멀티스레딩과 같은 리소스 최적화와 같은 디버깅 도구를 활성화하는 데 사용할 수 있습니다. 
+결정적으로, 이것은 내부 시뮬레이션 인터페이스의 너비를 정의하고 리소스 한계를 지정하는
+호스트 플랫폼(예: F1)을 호출합니다 
+(예: 플랫폼에 사용 가능한 DRAM 양).
 
 ``platform_build_args``
 ''''''''''''''''''''''''
 
-These configure the bitstream build, and are host-platform-agnostic.
-Platform-specific arguments, like the Vitis platform ("DEVICE"), are captured
-as arguments to the bitbuilder.
+이 설정은 비트스트림 빌드를 구성하며, 호스트 플랫폼에 무관합니다. 
+Vitis 플랫폼("DEVICE")과 같은 플랫폼별 인수는 비트빌더의 인수로 캡처됩니다.
 
 ``fpga_frequency``
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-Specifies the host FPGA frequency for a bitstream build.
-
-``build_strategy``
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-Specifies a pre-canned set of strategies and directives to pass to the
-bitstream build. Note, these are implemented differently on different host
-platforms, but try to optimize for the same things. Strategies supported across both Vitis, Xilinx Alveo U200/U250/U280, and EC2 F1 include:
-
- - ``TIMING``: Optimize for improved fmax.
- - ``AREA``: Optimize for reduced resource utilization.
-
-Names are derived AWS's strategy set.
-
-``TARGET_PROJECT`` `(Optional)`
-"""""""""""""""""""""""""""""""
-
-This specifies the target project in which the target is defined (this is described
-in greater detail :ref:`here<generating-different-targets>`).  If
-``TARGET_PROJECT`` is undefined the manager will default to ``firesim``.
-Setting ``TARGET_PROJECT`` is required for building the MIDAS examples
-(``TARGET_PROJECT: midasexamples``) with the manager, or for building a
-user-provided target project.
-
-``PLATFORM`` `(Optional)`
-"""""""""""""""""""""""""""""""
-
-This specifies the platform for which the target will be built for (this is described
-in greater detail :ref:`here<generating-different-targets>`).  If
-``PLATFORM`` is undefined the manager will default to ``f1``.
-
-``deploy_quintuplet``
-""""""""""""""""""""""""""
-
-This allows you to override the ``deployquintuplet`` stored with the AGFI.
-Otherwise, the ``PLATFORM``/``TARGET_PROJECT``/``DESIGN``/``TARGET_CONFIG``/``PLATFORM_CONFIG`` you specify
-above will be used. See the AGFI Tagging section for more details. Most likely,
-you should leave this set to ``null``. This is usually only used if you have
-proprietary RTL that you bake into an FPGA image, but don't want to share with
-users of the simulator.
-
-``post_build_hook``
-"""""""""""""""""""""""
-
-(Optional) Provide an a script to run on the results copied back
-from a _single_ build instance. Upon completion of each design's build,
-the manager invokes this script and passing the absolute path to that instance's
-build-results directory as it's first argument.
-
-``metasim_customruntimeconfig``
-""""""""""""""""""""""""""""""""
-
-This is an advanced feature - under normal conditions, you can use the default
-parameters generated automatically by the simulator by setting this field to
-``null`` for metasimulations. If you want to customize runtime parameters for certain parts of
-the metasimulation (e.g. the DRAM model's runtime parameters), you can place
-a custom config file in ``sim/custom-runtime-configs/``. Then, set this field
-to the relative name of the config. For example,
-``sim/custom-runtime-configs/GREATCONFIG.conf`` becomes
-``metasim_customruntimeconfig: GREATCONFIG.conf``.
-
-``bit_builder_recipe``
-"""""""""""""""""""""""
-
-This specifies the bitstream type to generate for a particular recipe.
-This must point to a file in ``deploy/bit-builder-recipes/``.
-See :ref:`bit-builder-recipe` for more details on bit builders and their arguments.
-
-``bit_builder_arg_overrides``
-""""""""""""""""""""""""""""""
-
-This optional mapping of keys/values allows you to override the default arguments provided by the ``bit_builder_recipe``.
-This mapping must match the same mapping structure as the ``args`` mapping within the ``bit_builder_recipe`` file given.
-Overridden arguments override recursively such that all key/values present in the override args replace the default arguments given
-by the ``bit_builder_recipe``. In the case of sequences, a overridden sequence completely replaces the corresponding sequence in the default args.
-Additionally, it is not possible to change the default bit builder type through these overrides.
-This must be done by changing the default ``bit_builder_recipe``.
-
-.. _config-hwdb:
-
-``config_hwdb.yaml``
----------------------------
-
-Here is a sample of this configuration file:
-
-.. literalinclude:: /../deploy/sample-backup-configs/sample_config_hwdb.yaml
-   :language: yaml
-
-
-This file tracks hardware configurations that you can deploy as simulated nodes
-in FireSim. Each such configuration contains a name for easy reference in higher-level
-configurations, defined in the section header, an handle to a bitstream (i.e. an AGFI or ``bitstream_tar`` path), which represents the
-FPGA image, a custom runtime config, if one is needed, and a deploy quintuplet
-override if one is necessary.
-
-When you build a new bitstream, you should put it in this
-file so that it can be referenced from your other configuration files.
-
-The following is an example section from this file - you can add as many of
-these as necessary:
-
-.. literalinclude:: /../deploy/sample-backup-configs/sample_config_hwdb.yaml
-   :language: yaml
-   :start-after: DOCREF START: Example HWDB Entry
-   :end-before: DOCREF END: Example HWDB Entry
-
-Here are the components of these entries:
-
-The name: ``firesim_boom_singlecore_nic_l2_llc4mb_ddr3``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-In this example, ``firesim_boom_singlecore_nic_l2_llc4mb_ddr3`` is the name that will be
-used to reference this hardware design in other configuration locations. The following
-items describe this hardware configuration:
-
-``agfi``
-"""""""""""""""
-
-This represents the AGFI (FPGA Image) used by this hardware configuration.
-Only used in AWS EC2 F1 FireSim configurations (a ``bitstream_tar`` key/value cannot exist with this
-key/value in the same recipe).
-
-``bitstream_tar``
-"""""""""""""""""
-
-This is not shown in the example entry above, but would be used for an on-premises bitstream.
-
-Indicates where the bitstream (FPGA Image) and metadata associated with it is located, may be one of:
-
-* A Uniform Resource Identifier (URI), (see :ref:`uri-path-support` for details)
-* A filesystem path available to the manager. Local paths are relative to the `deploy` folder.
-
-``deploy_quintuplet_override``
-""""""""""""""""""""""""""""""
-
-This is an advanced feature - under normal conditions, you should leave this set to ``null``, so that the
-manager uses the configuration quintuplet that is automatically stored with the
-bitstream metadata at build time. Advanced users can set this to a different
-value to build and use a different driver when deploying simulations. Since
-the driver depends on logic now hardwired into the
-FPGA bitstream, drivers cannot generally be changed without requiring FPGA
-recompilation.
-
-
-``custom_runtime_config``
-"""""""""""""""""""""""""""""
-
-This is an advanced feature - under normal conditions, you can use the default
-parameters generated automatically by the simulator by setting this field to
-``null``. If you want to customize runtime parameters for certain parts of
-the simulation (e.g. the DRAM model's runtime parameters), you can place
-a custom config file in ``sim/custom-runtime-configs/``. Then, set this field
-to the relative name of the config. For example,
-``sim/custom-runtime-configs/GREATCONFIG.conf`` becomes
-``custom_runtime_config: GREATCONFIG.conf``.
-
-
-``driver_tar``
-"""""""""""""""""""""""""""""
-
-The value for this key can be one of:
-
-* A Uniform Resource Identifier (URI), (see :ref:`uri-path-support` for details)
-* A filesystem path available to the manager. Local paths are relative to the `deploy` folder.
-
-When this key is present, the FireSim FPGA-driver software will not be built from source.
-Instead, during `firesim infrasetup`, this file will be deployed and extracted
-into the `sim_slot_X` folder on the run farm instance. This file may
-be a `.tar`, `.tar.gz`, `.tar.bz2` or any other format that GNU tar (version 1.26)
-can automatically detect. The purpose of this feature is to enable advanced CI
-configurations where the driver build step is decoupled. For now this can
-only accept a path to a file on the manager's local filesystem.
-This key can also be a URI.
-
-
-
-Add more hardware config sections, like ``NAME_GOES_HERE_2``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-You can add as many of these entries to ``config_hwdb.yaml`` as you want, following the format
-discussed above (i.e. you provide ``agfi`` or ``bitstream_tar``, ``deploy_quintuplet_override``, and ``custom_runtime_config``).
-
-.. _run-farm-recipe:
-
-Run Farm Recipes (``run-farm-recipes/*``)
-------------------------------------------
-
-Here is an example of this configuration file:
-
-.. literalinclude:: /../deploy/run-farm-recipes/aws_ec2.yaml
-   :language: yaml
-
-``run_farm_type``
-^^^^^^^^^^^^^^^^^
-
-This key/value specifies a run farm class to use for launching, managing, and terminating
-run farm hosts used for simulations.
-By default, run farm classes can be found in :gh-file-ref:`deploy/runtools/run_farm.py`. However, you can specify
-your own custom run farm classes by adding your python file to the ``PYTHONPATH``.
-For example, to use the ``AWSEC2F1`` run farm class, you would write ``run_farm_type: AWSEC2F1``.
-
-``args``
-^^^^^^^^^^^^^^^^^^^^^
-
-This section specifies all arguments needed for the specific ``run_farm_type`` used.
-For a list of arguments needed for a run farm class, users should refer to
-the ``_parse_args`` function in the run farm class given by ``run_farm_type``.
-
-``aws_ec2.yaml`` run farm recipe
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-The run farm recipe shown above configures a FireSim run farm to use AWS EC2 instances.
-It contains several key/value pairs:
-
-``run_farm_tag``
-""""""""""""""""
-
-Use ``run_farm_tag`` to differentiate between different Run Farms in FireSim.
-Having multiple ``config_runtime.yaml`` files with different ``run_farm_tag``
-values allows you to run many experiments at once from the same manager instance.
-
-The instances launched by the ``launchrunfarm`` command will be tagged with
-this value. All later operations done by the manager rely on this tag, so
-you should not change it unless you are done with your current Run Farm.
-
-Per AWS restrictions, this tag can be no longer than 255 characters.
-
-``always_expand_run_farm``
-""""""""""""""""""""""""""
-When ``true`` (the default behavior when not given) the number of instances
-of each type (see ``f1.16xlarges`` etc. below)  are launched every time you
-run ``launchrunfarm``.
-
-When ``false``, ``launchrunfarm`` looks for already existing instances that
-match ``run_farm_tag`` and treat ``f1.16xlarges`` (and other 'instance-type'
-values below) as a total count.
-
-For example, if you have ``f1.2xlarges`` set to 100 and the first time you
-run ``launchrunfarm`` you have ``launch_instances_timeout_minutes`` set to 0
-(i.e. giveup after receiving a ``ClientError`` for each AvailabilityZone) and
-AWS is only able to provide you 75 ``f1.2xlarges`` because of capacity issues,
-``always_expand_runfarm`` changes the behavior of ``launchrunfarm`` in subsequent
-attempts.  ``yes`` means ``launchrunfarm`` will try to launch 100 ``f1.2xlarges``
-again.  ``no`` means that ``launchrunfarm`` will only try to launch an additional
-25 ``f1.2xlarges`` because it will see that there are already 75 that have been launched
-with the same ``run_farm_tag``.
-
-``launch_instances_timeout_minutes``
-""""""""""""""""""""""""""""""""""""
-
-Integer number of minutes that the ``launchrunfarm`` command will attempt to
-request new instances before giving up.  This limit is used for each of the types
-of instances being requested.  For example, if you set to 60,
-and you are requesting all four types of instances, ``launchrunfarm`` will try
-to launch each instance type for 60 minutes, possibly trying up to a total of
-four hours.
-
-This limit starts to be applied from the first time ``launchrunfarm`` receives a
-``ClientError`` response in all AvailabilityZones (AZs) for your region.  In other words,
-if you request more instances than can possibly be requested in the given limit but AWS
-is able to satisfy all of the requests, the limit will not be enforced.
-
-To experience the old (<= 1.12) behavior, set this limit to 0 and ``launchrunfarm``
-will exit the first time it receives ``ClientError`` across all AZ's. The old behavior
-is also the default if ``launch_instances_timeout_minutes`` is not included.
-
-``run_instance_market``
-""""""""""""""""""""""""
-
-You can specify either ``spot`` or ``ondemand`` here, to use one of those
-markets on AWS.
-
-``spot_interruption_behavior``
-""""""""""""""""""""""""""""""
-
-When ``run_instance_market: spot``, this value determines what happens to an instance
-if it receives the interruption signal from AWS. You can specify either
-``hibernate``, ``stop``, or ``terminate``.
-
-``spot_max_price``
-"""""""""""""""""""""""""""""
-
-When ``run_instance_market: spot``, this value determines the max price you are
-willing to pay per instance, in dollars. You can also set it to ``ondemand``
-to set your max to the on-demand price for the instance.
-
-``default_simulation_dir``
-"""""""""""""""""""""""""""""
-
-This is the path on the run farm host that simulations will run out of.
-
-``run_farm_hosts_to_use``
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-This is a sequence of unique specifications (given by ``run_farm_host_specs``) to number of instances needed.
-Set these key/value pairs respectively based on the number and types of instances
-you need. While we could automate this setting, we choose not to, so that
-users are never surprised by how many instances they are running.
-
-Note that these values are ONLY used to launch instances. After launch, the
-manager will query the AWS API to find the instances of each type that have the
-``run_farm_tag`` set above assigned to them.
-
-Also refer to ``always_expand_runfarm`` which determines whether ``launchrunfarm``
-treats these counts as an incremental amount to be launched every time it is envoked
-or a total number of instances of that type and ``run_farm_tag`` that should be made
-to exist.  Note, ``launchrunfarm`` will never terminate instances.
-
-``run_farm_host_specs``
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-This is a sequence of specifications that describe a AWS EC2 instance and its properties.
-A sequence consists of the AWS EC2 instance name (i.e. ``f1.2xlarge``) and number of FPGAs it supports
-(``num_fpgas``), number of metasims it could support (``num_metasims``), and if the instance
-should only host switch simulations (``use_for_switch_only``). Additionally, a specification can optionally add
-``override_simulation_dir`` to override the ``default_simulation_dir`` for that specific run farm host.
-Similarly, a specification can optionally add ``override_platform`` to choose a different default deploy manager platform for
-that specific run farm host (for more details on this see the following section). By default, the deploy manager is setup
-for AWS EC2 simulations.
-
-
-``externally_provisioned.yaml`` run farm recipe
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-This run farm allows users to provide a list of pre-setup unmanaged run farm hosts (by hostname or IP address) that
-they can run simulations on.
-Note that this run farm type does not launch or terminate the run farm hosts. This functionality should be handled by the user.
-For example, users can use this run farm type to run simulations locally.
-
-Here is an example of this configuration file:
-
-.. literalinclude:: /../deploy/run-farm-recipes/externally_provisioned.yaml
-   :language: yaml
-
-``default_platform``
-""""""""""""""""""""
-
-This key/value specifies a default deploy platform (also known as a deploy manager) class to use for managing
-simulations across all run farm hosts.
-For example, this class manages how to flash FPGAs with bitstreams, how to copy back results, and how to check if a simulation is running.
-By default, deploy platform classes can be found in :gh-file-ref:`deploy/runtools/run_farm_deploy_managers.py`. However, you can specify
-your own custom run farm classes by adding your python file to the ``PYTHONPATH``.
-There are default deploy managers / platforms that correspond to AWS EC2 F1 FPGAs, Vitis FPGAs, Xilinx Alveo U200/U250/U280 FPGAs, Xilinx VCU118 FPGAs, and RHS Research Nitefury II FPGAs: ``EC2InstanceDeployManager``, ``VitisInstanceDeployManager``, ``Xilinx{AlveoU200,AlveoU250,AlveoU280,VCU118}InstanceDeployManager``, and ``RHSResearchNitefuryIIInstanceDeployManager`` respectively.
-For example, to use the ``EC2InstanceDeployManager`` deploy platform class, you would write ``default_platform: EC2InstanceDeployManager``.
-
-``default_simulation_dir``
-"""""""""""""""""""""""""""""
-
-This is the default path on all run farm hosts that simulations will run out of.
-
-``run_farm_hosts_to_use``
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-This is a sequence of unique hostnames/IP address to specifications (given by ``run_farm_host_specs``).
-Set these key/value pairs respectively to map unmanaged run farm hosts
-to their description (given by a specification).
-For example, to run simulations locally, a user can write a sequence element with ``- localhost: four_fpgas_spec`` to
-indicate that ``localhost`` should be used and that it has a type of ``four_fpgas_spec``.
-
-``run_farm_host_specs``
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-This is a sequence of specifications that describe an unmanaged run farm host and its properties.
-A sequence consists of the specification name (i.e. ``four_fpgas_spec``) and number of FPGAs it supports
-(``num_fpgas``), number of metasims it could support (``num_metasims``), and if the instance
-should only host switch simulations (``use_for_switch_only``). Additionally, a specification can optionally add
-``override_simulation_dir`` to override the ``default_simulation_dir`` for that specific run farm host.
-Similarly, a specification can optionally add ``override_platform`` to choose a different ``default_platform`` for
-that specific run farm host.
-
-.. _build-farm-recipe:
-
-Build Farm Recipes (``build-farm-recipes/*``)
------------------------------------------------
-
-Here is an example of this configuration file:
-
-.. literalinclude:: /../deploy/build-farm-recipes/aws_ec2.yaml
-   :language: yaml
-
-``build_farm_type``
-^^^^^^^^^^^^^^^^^^^^
-
-This key/value specifies a build farm class to use for launching, managing, and terminating
-build farm hosts used for building bitstreams.
-By default, build farm classes can be found in :gh-file-ref:`deploy/buildtools/buildfarm.py`. However, you can specify
-your own custom build farm classes by adding your python file to the ``PYTHONPATH``.
-For example, to use the ``AWSEC2`` build farm class, you would write ``build_farm_type: AWSEC2``.
-
-``args``
-^^^^^^^^^^^^^^^^^^^^^
-
-This section specifies all arguments needed for the specific ``build_farm_type`` used.
-For a list of arguments needed for a build farm class, users should refer to
-the ``_parse_args`` function in the build farm class given by ``build_farm_type``.
-
-``aws_ec2.yaml`` build farm recipe
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-This build farm recipe configures a FireSim build farm to use AWS EC2 instances enabled with Vivado.
-
-Here is an example of this configuration file:
-
-.. literalinclude:: /../deploy/build-farm-recipes/aws_ec2.yaml
-   :language: yaml
-
-``build_farm_tag``
-""""""""""""""""""
-
-Use ``build_farm_tag`` to differentiate between different Build Farms used across **multiple FireSim repositories**.
-The instances launched by the ``buildbitstream`` command will be tagged with
-this value.
-Mainly for CI use.
-
-Per AWS restrictions, this tag can be no longer than 255 characters.
-
-``instance_type``
-""""""""""""""""""
-
-The AWS EC2 instance name to run a bitstream build on. Note that for large designs, Vivado uses
-an excess of 32 GiB so choose a non-default instance type wisely.
-
-``build_instance_market``
-""""""""""""""""""""""""""
-
-You can specify either ``spot`` or ``ondemand`` here, to use one of those
-markets on AWS.
-
-``spot_interruption_behavior``
-""""""""""""""""""""""""""""""
-
-When ``run_instance_market: spot``, this value determines what happens to an instance
-if it receives the interruption signal from AWS. You can specify either
-``hibernate``, ``stop``, or ``terminate``.
-
-``spot_max_price``
-"""""""""""""""""""""""""""""
-
-When ``build_instance_market: spot``, this value determines the max price you are
-willing to pay per instance, in dollars. You can also set it to ``ondemand``
-to set your max to the on-demand price for the instance.
-
-``default_build_dir``
-"""""""""""""""""""""""""""""
-
-This is the path on the build farm host that bitstream builds will run out of.
-
-``externally_provisioned.yaml`` build farm recipe
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-This build farm recipe allows users to provide an list of pre-setup unmanaged build farm hosts (by hostname or IP address) that
-they can run bitstream builds on.
-Note that this build farm type does not launch or terminate the build farm hosts. This functionality should be handled by the user.
-For example, users can use this build farm type to run bitstream builds locally.
-
-Here is an example of this configuration file:
-
-.. literalinclude:: /../deploy/build-farm-recipes/externally_provisioned.yaml
-   :language: yaml
-
-``default_build_dir``
-"""""""""""""""""""""""""""""
-
-This is the default path on all the build farm hosts that bitstream builds will run out of.
-
-``build_farm_hosts``
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-This is a sequence of unique hostnames/IP addresses that should be used as build farm hosts.
-Each build farm host (given by the unique hostname/IP address) can have an optional mapping that provides an
-``override_build_dir`` that overrides the ``default_build_dir`` given just for that build farm host.
-
-.. _bit-builder-recipe:
-
-Bit Builder Recipes (``bit-builder-recipes/*``)
-------------------------------------------------
-
-Here is an example of this configuration file:
-
-.. literalinclude:: /../deploy/bit-builder-recipes/f1.yaml
-   :language: yaml
-
-``bit_builder_type``
-^^^^^^^^^^^^^^^^^^^^
-
-This key/value specifies a bit builder class to use for building bitstreams.
-By default, bit builder classes can be found in :gh-file-ref:`deploy/buildtools/bitbuilder.py`. However, you can specify
-your own custom bit builder classes by adding your python file to the ``PYTHONPATH``.
-For example, to use the ``F1BitBuilder`` build farm class, you would write ``bit_builder_type: F1BitBuilder``.
-
-``args``
-^^^^^^^^^^^^^^^^^^^^^
-
-This section specifies all arguments needed for the specific ``bit_builder_type`` used.
-For a list of arguments needed for a bit builder class, users should refer to
-the ``_parse_args`` function in the bit builder class given by ``bit_builder_type``.
-
-``f1.yaml`` bit builder recipe
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-This bit builder recipe configures a build farm host to build an AWS EC2 F1 AGFI (FPGA bitstream).
-
-Here is an example of this configuration file:
-
-.. literalinclude:: /../deploy/bit-builder-recipes/f1.yaml
-   :language: yaml
-
-``s3_bucket_name``
-""""""""""""""""""""""""""
-
-This is used behind the scenes in the AGFI creation process. You will only
-ever need to access this bucket manually if there is a failure in AGFI creation
-in Amazon's backend.
-
-Naming rules: this must be all lowercase and you should stick to letters and numbers ([a-z0-9]).
-
-The first time you try to run a build, the FireSim manager will try to create
-the bucket you name here. If the name is unavailable, it will complain and you
-will need to change this name. Once you choose a working name, you should never
-need to change it.
-
-In general, ``firesim-yournamehere`` is a good choice.
-
-``append_userid_region``
-""""""""""""""""""""""""""
-
-When enabled, this appends the current users AWS user ID and region to the ``s3_bucket_name``.
-
-``vitis.yaml`` bit builder recipe
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-This bit builder recipe configures a build farm host to build an Vitis bitstream (FPGA bitstream called an ``xclbin``, packaged into a ``bitstream_tar``).
-
-``device``
-""""""""""""""""""""""""""
-This specifies a Vitis platform to compile against, for example: ``xilinx_u250_gen3x16_xdma_3_1_202020_1`` when targeting a Vitis-enabled Alveo U250 FPGA.
-
-Here is an example of this configuration file:
-
-.. literalinclude:: /../deploy/bit-builder-recipes/vitis.yaml
-   :language: yaml
-
-``xilinx_alveo_u200.yaml`` bit builder recipe
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-This bit builder recipe configures a build farm host to build an Xilinx Alveo U200 bitstream, packaged into a ``bitstream_tar``.
-
-``xilinx_alveo_u250.yaml`` bit builder recipe
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-This bit builder recipe configures a build farm host to build an Xilinx Alveo U250 bitstream, packaged into a ``bitstream_tar``.
-
-``xilinx_alveo_u280.yaml`` bit builder recipe
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-This bit builder recipe configures a build farm host to build an Xilinx Alveo U280 bitstream, packaged into a ``bitstream_tar``.
-
-``xilinx_vcu118.yaml`` bit builder recipe
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-This bit builder recipe configures a build farm host to build an Xilinx VCU118 bitstream, packaged into a ``bitstream_tar``.
-
-``rhsresearch_nitefury_ii.yaml`` bit builder recipe
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-This bit builder recipe configures a build farm host to build an RHS Research Nitefury II bitstream, packaged into a ``bitstream_tar``.
+비트스트림 빌드의 호스트 FPGA 주파수를 지정합니다

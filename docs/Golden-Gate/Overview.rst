@@ -1,70 +1,39 @@
 Overview & Philosophy
 =====================
 
-Underpinning FireSim is Golden Gate (MIDAS II), a FIRRTL-based compiler and C++ library, which
-is used to transform Chisel-generated RTL into a deterministic FPGA-accelerated
-simulator.
+FireSim의 기저에는 Chisel로 생성된 RTL을 결정론적 FPGA 가속 시뮬레이터로 변환하는 데 사용되는 FIRRTL 기반 컴파일러 및 C++ 라이브러리인 Golden Gate (MIDAS II)가 있습니다.
 
 Golden Gate vs FPGA Prototyping
 -------------------------------
 
-Key to understanding the design of Golden Gate, is understanding that Golden Gate-generated
-simulators are not FPGA prototypes. Unlike in a prototype, Golden Gate-generated simulators decouple the
-target-design clocks from all FPGA-host clocks (we say it is *host-decoupled*): one cycle in the target machine is
-simulated over a dynamically variable number FPGA clock cycles. In constrast, a
-conventional FPGA-prototype "emulates" the SoC by implementing the target
-directly in FPGA logic, with each FPGA-clock edge executing a clock edge of the
-SoC.
+Golden Gate의 설계를 이해하려면 Golden Gate로 생성된 시뮬레이터가 FPGA 프로토타입이 아니라는 점을 이해하는 것이 중요합니다. 프로토타입과 달리 Golden Gate로 생성된 시뮬레이터는 타겟 설계 클록을 모든 FPGA 호스트 클록과 분리합니다(*host-decoupled*라고 합니다): 타겟 머신의 한 사이클이 동적으로 가변적인 수의 FPGA 클록 사이클에 걸쳐 시뮬레이션됩니다. 반면, 전통적인 FPGA 프로토타입은 타겟을 FPGA 로직에 직접 구현하여 SoC의 클록 에지를 각 FPGA 클록 에지로 실행하면서 SoC를 "에뮬레이트"합니다.
 
 Why Use Golden Gate & FireSim
 -------------------------------
 
-The host decoupling by Golden Gate-generated simulators enables:
+Golden Gate로 생성된 시뮬레이터의 호스트 분리는 다음과 같은 이점을 제공합니다:
 
-#. **Deterministic simulation**
-   Golden Gate creates a closed simulation environment such that bugs in the target can be reproduced
-   despite timing-differences (eg. DRAM refresh, PCI-E transport latency) in the underlying host.
-   The simulators for the same target can be generated for different host-FPGAs but will maintain
-   the same target behavior.
+#. **결정론적 시뮬레이션**
+   Golden Gate는 호스트의 타이밍 차이(예: DRAM 새로 고침, PCI-E 전송 지연)에도 불구하고 타겟의 버그를 재현할 수 있는 폐쇄된 시뮬레이션 환경을 만듭니다.
+   동일한 타겟의 시뮬레이터는 다른 호스트 FPGA용으로 생성될 수 있지만 동일한 타겟 동작을 유지합니다.
 
-#. **FPGA-host optimizations**
-   Structures in ASIC RTL that map poorly to FPGA logic can be replaced with models
-   that preserve the target RTL's behavior, but take more host cycles to save resources.
-   eg. A 5R, 3W-ported register file with a dual-ported BRAM over 4 cycles.
+#. **FPGA 호스트 최적화**
+   ASIC RTL의 FPGA 로직에 잘 맞지 않는 구조는 타겟 RTL의 동작을 유지하면서 자원을 절약하기 위해 더 많은 호스트 사이클을 소모하는 모델로 대체될 수 있습니다.
+   예: 5R, 3W 포트 레지스터 파일을 4 사이클 동안 듀얼 포트 BRAM으로 대체.
 
-#. **Distributed simulation & software co-simulation**
-   Since models are decoupled from host time, it becomes much easier to host
-   components of the simulator on multiple FPGAs, and on a host-CPU, while still
-   preserving simulation determinism. This feature serves as the basis for building
-   cycle-accurate scale-out systems with FireSim.
+#. **분산 시뮬레이션 및 소프트웨어 공동 시뮬레이션**
+   모델이 호스트 시간과 분리되기 때문에 여러 FPGA와 호스트 CPU에서 시뮬레이터의 구성 요소를 호스팅하면서도 시뮬레이션의 결정성을 유지하기가 훨씬 쉬워집니다. 이 기능은 FireSim을 사용하여 싸이클 정확한 확장 시스템을 구축하는 기반이 됩니다.
 
-#. **FPGA-hosted, timing-faithful models of I/O devices**
-   Most simple FPGA-prototypes use FPGA-attached DRAM to model the target's
-   DRAM memory system. If the available memory system does not match that of
-   the target, the target's simulated performance will be artificially
-   fast or slow. Host-decoupling permits writing detailed timing models that
-   provide host-independent, deterministic timing of the target's memory system,
-   while still use FPGA-host resources like DRAM as a functional store.
-
+#. **FPGA에 호스팅된 타이밍 신뢰성 있는 I/O 장치 모델**
+   대부분의 간단한 FPGA 프로토타입은 타겟의 DRAM 메모리 시스템을 모델링하기 위해 FPGA에 직접 연결된 DRAM을 사용합니다. 사용 가능한 메모리 시스템이 타겟과 일치하지 않으면 타겟의 시뮬레이션 성능이 인위적으로 빠르거나 느리게 됩니다. 호스트 분리를 통해 메모리 시스템의 호스트 독립적이고 결정론적인 타이밍을 제공하는 상세한 타이밍 모델을 작성할 수 있으며, 여전히 DRAM과 같은 FPGA 호스트 자원을 기능적 저장소로 사용할 수 있습니다.
 
 Why Not Golden Gate
 -----------------------------------
 
-Ultimately, Golden Gate-generated simulators introduce overheads not present in an
-FPGA-prototype that *may* increase FPGA resource use, decrease fmax, and
-decrease overall simulation throughput [#]_.  Those looking to develop
-soft-cores or develop a complete FPGA-based platform with their own boards and
-I/O devices would be best served by implementing their design directly on an FPGA. For
-those looking to building a system around Rocket-Chip, we'd suggest looking at
-`SiFive's Freedom platform <https://github.com/sifive/freedom>`_ to start.
+결국, Golden Gate로 생성된 시뮬레이터는 FPGA 프로토타입에는 존재하지 않는 오버헤드를 도입하여 FPGA 자원 사용을 증가시키거나 fmax를 감소시키거나 전체 시뮬레이션 처리량을 감소시킬 수 있습니다 [#]_. 소프트 코어를 개발하거나 자체 보드와 I/O 장치를 사용한 FPGA 기반 플랫폼을 완전히 개발하려는 사람들은 설계를 FPGA에 직접 구현하는 것이 최선입니다. Rocket-Chip을 중심으로 시스템을 구축하려는 사람들은 `SiFive의 Freedom 플랫폼 <https://github.com/sifive/freedom>`_ 을 시작점으로 살펴보는 것이 좋습니다.
 
 How is Host-Decoupling Implemented?
 -----------------------------------
-Host-decoupling in Golden Gate-generated simulators is implemented by decomposing the
-target machine into a dataflow graph of latency-insensitive models. As a user
-of FireSim, understanding this dataflow abstraction is essential for debugging
-your system and for developing your own software models and bridges. We
-describe it in the next section.
+Golden Gate로 생성된 시뮬레이터에서 호스트 분리는 타겟 머신을 지연 민감도 모델의 데이터 흐름 그래프로 분해함으로써 구현됩니다. FireSim 사용자로서 이 데이터 흐름 추상을 이해하는 것은 시스템을 디버깅하고 자체 소프트웨어 모델과 브리지를 개발하는 데 필수적입니다. 다음 섹션에서 이에 대해 설명합니다.
 
-.. [#] These overheads varying depending on the features implemented and optimizations applied. Certain optimizations, currently in development, may increase fmax or decrease resource utilization over the equivalent prototype.
-
+.. [#] 이러한 오버헤드는 구현된 기능과 적용된 최적화에 따라 다릅니다. 현재 개발 중인 특정 최적화는 동일한 프로토타입에 비해 fmax를 증가시키거나 자원 활용도를 감소시킬 수 있습니다.
