@@ -1,8 +1,7 @@
 Debugging in Software
 =========================
 
-This section describes methods of debugging the target design and the
-simulation in FireSim, *before running on the FPGA*.
+이 섹션에서는 *FPGA에서 실행하기 전에* 타겟 설계와 FireSim에서 시뮬레이션을 디버깅하는 방법에 대해 설명합니다.
 
 
 .. toctree::

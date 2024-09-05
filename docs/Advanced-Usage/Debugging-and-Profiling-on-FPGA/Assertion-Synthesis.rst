@@ -1,31 +1,19 @@
-Assertion Synthesis: Catching RTL Assertions on the FPGA
+Assertion Synthesis: Catching RTL Assertions on the FPGA  
 ========================================================================
 
-Golden Gate can synthesize assertions present in FIRRTL (implemented as ``stop``
-statements) that would otherwise be lost in the FPGA synthesis flow. Rocket
-and BOOM include hundreds of such assertions which, when synthesized, can
-provide great insight into why the target may be failing.
+Golden Gate는 FPGA 합성 흐름에서 손실될 수 있는 FIRRTL에 존재하는 어서션(``stop`` 문으로 구현됨)을 합성할 수 있습니다. Rocket과 BOOM은 수백 개의 이러한 어서션을 포함하고 있으며, 이를 합성하면 타겟이 실패하는 이유에 대한 큰 통찰력을 얻을 수 있습니다.
 
-Enabling Assertion Synthesis
+Assertion Synthesis 활성화  
 ----------------------------
 
-To enable assertion synthesis prepend ``WithSynthAsserts`` config to your
-PLATFORM_CONFIG.  During compilation, Golden Gate will print the number of
-assertions it's synthesized.  In the generated header, you will find the
-definitions of all synthesized assertions. The ``synthesized_assertions_t``
-bridge driver will be automatically instantiated.
+Assertion 합성을 활성화하려면 ``WithSynthAsserts`` 구성을 PLATFORM_CONFIG에 추가하십시오. 컴파일 중 Golden Gate는 합성된 어서션의 수를 출력합니다. 생성된 헤더에서 모든 합성된 어서션의 정의를 찾을 수 있습니다. ``synthesized_assertions_t`` 브리지 드라이버가 자동으로 인스턴스화됩니다.
 
-
-Runtime Behavior
+Runtime Behavior  
 ----------------
 
-If an assertion is caught during simulation, the driver will print the
-assertion cause, the path to module instance in which it fired, a source
-locator, and the cycle on which the assertion fired. Simulation will then
-terminate.
+시뮬레이션 중 어서션이 발생하면 드라이버는 어서션의 원인, 어서션이 발생한 모듈 인스턴스 경로, 소스 로케이터 및 어서션이 발생한 사이클을 출력합니다. 시뮬레이션은 그 후 종료됩니다.
 
-An example of an assertion caught in a dual-core instance of BOOM is given
-below:
+BOOM의 듀얼 코어 인스턴스에서 발생한 어서션 예시는 아래와 같습니다:
 
 .. code-block:: text
 
@@ -35,16 +23,9 @@ below:
         at cycle: 2142042185
 
 
+Verilator 또는 VCS를 사용하는 소프트웨어 기반의 RTL 시뮬레이션과 마찬가지로, 보고된 사이클은 어서션이 인스턴스화된 클록 도메인에서 경과된 타겟 사이클 수입니다 (Chisel에서는 이는 ``assert`` 를 호출한 시점의 암시적 클록입니다). 동일한 입력으로 FireSim 시뮬레이션을 다시 실행하면 동일한 어서션이 동일한 사이클에서 결정론적으로 발생해야 합니다.
 
-Just as in a software-hosted RTL simulation using verilator or VCS, the
-reported cycle is the number of target cycles that have elapsed in the clock
-domain in which the assertion was instantiated (in Chisel specifically this is
-the implicit clock at the time you called ``assert``). If you rerun a FireSim
-simulation with identical inputs, the same assertion should fire
-deterministically at the same cycle.
-
-Related Publications
+Related Publications  
 --------------------
 
-Assertion synthesis was first presented in our FPL2018 paper, `DESSERT
-<https://people.eecs.berkeley.edu/~biancolin/papers/dessert-fpl18.pdf>`_.
+Assertion 합성은 FPL2018 논문, `DESSERT <https://people.eecs.berkeley.edu/~biancolin/papers/dessert-fpl18.pdf>`_ 에서 처음 소개되었습니다.
