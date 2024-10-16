@@ -3,7 +3,7 @@
 Manager URI Paths
 ===============================
 
-Some keys specified in ``config_hwdb.yaml`` may be specified as a ``URI``
+``config_hwdb.yaml`` 에 지정된 일부 키는 ``URI`` 로 지정될 수 있습니다.
 
 ``URI Support``
 --------------------------

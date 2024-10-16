@@ -44,7 +44,7 @@ Setting up the manager configuration
 * ``run_farm_hosts_to_use`` 아래에 ``f1.2xlarge`` 에 대한 유일한 비제로 값이 ``1`` 로 설정되어 있습니다. 이 가이드에서는 이 설정이 필요합니다.
 * ``run_farm`` 매핑에서 ``run_instance_market``, ``spot_interruption_behavior``, ``spot_max_price`` 와 같은 다른 매개변수들도 볼 수 있습니다. AWS에 익숙한 사용자라면 :ref:`manager-configuration-files` 섹션을 참고하여 이들이 무엇을 하는지 확인할 수 있습니다. 그렇지 않으면 변경하지 마십시오.
 
-다음으로, 타겟 디자인이 관리자에게 지정되는 방식을 살펴보겠습니다. 이는 ``firesim/deploy/config_runtime.yaml``의 ``target_config`` 섹션에 위치하며, 주석이 제거된 상태로 아래에 표시되어 있습니다:
+다음으로, 타겟 디자인이 관리자에게 지정되는 방식을 살펴보겠습니다. 이는 ``firesim/deploy/config_runtime.yaml`` 의 ``target_config`` 섹션에 위치하며, 주석이 제거된 상태로 아래에 표시되어 있습니다:
 
 .. code-block:: yaml
 
@@ -113,42 +113,41 @@ Run Farm을 시작하려면 다음 명령을 실행합니다:
 	The full log of this run is:
 	/home/centos/firesim-new/deploy/logs/2018-05-19--00-19-43-launchrunfarm-B4Q2ROAK0JN9EDE4.log
 
-출력이 ``Waiting for instance boots: f1.2xlarges`` 까지 빠르게 진행된 후, ``f1.2xlarge`` 인스턴스가 시작될 때까지 1~2분 정도 소요됩니다. 시작이 완료되면 인스턴스 ID가 출력되고, AWS EC2 관리 콘솔에서도 인스턴스를 볼 수 있습니다. 관리자는 ``config_runtime.yaml`` 파일에서 위에서 설정한 ``run_farm_tag`` 값을 사용하여 시작된 인스턴스에 태그를 지정합니다. 이 값은 관리자가 여러 Run Farm을 구별할 수 있도록 하며, 여러 독립적인 Run Farm이 서로 다른 작업 부하/하드웨어 구성으로 병렬로 실행될 수 있습니다. 이는 :ref:`manager-configuration-files` 및 :ref:`firesim-launchrunfarm` 섹션에서 자세히 설명되며, 여기서는 익숙하지 않아도 됩니다.
+출력이 ``Waiting for instance boots: f1.2xlarges`` 까지 빠르게 진행된 후, ``f1.2xlarge`` 인스턴스가 시작될 때까지 1~2분 정도 소요됩니다. 시작이 완료되면 인스턴스 ID가 출력되고, AWS EC2 관리 콘솔에서도 인스턴스를 볼 수 있습니다. 관리자는 ``config_runtime.yaml`` 파일에서 위에서 설정한 ``run_farm_tag`` 값을 사용하여 시작된 인스턴스에 태그를 지정합니다. 이 값은 관리자가 여러 Run Farm을 구별할 수 있도록 하며, 여러 독립적인 Run Farm이 서로 다른 작업 부하/하드웨어 구성으로 병렬로 실행될 수 있습니다. 이는 :ref:`manager-configuration-files` 및 :ref:`firesim-launchrunfarm` 섹션에서 자세히 설명되며, 여기서는 익숙하지 않아도 괜찮습니다.
+
 
 Setting up the simulation infrastructure
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-관리자는 또한 시뮬레이션을 실행하는 데 필요한 모든 소프트웨어 구성 요소를 빌드하고 배포합니다. 관리자는 또한 FPGA 프로그래밍을 처리합니다. 시뮬레이션 인프라를 설정하려면 다음 명령을 실행하십시오:
-
-.. code-block:: bash
-
-    firesim infrasetup
-
-완전한 실행을 위해서는 다음과 같은 출력을 예상할 수 있습니다:
+매니저는 시뮬레이션을 실행하는 데 필요한 모든 소프트웨어 구성 요소를 빌드하고 배포하는 작업도 담당합니다. 매니저는 FPGA 프로그래밍도 처리합니다. 매니저에게 시뮬레이션 인프라를 설정하도록 지시하려면 실행해 보겠습니다:
 
 .. code-block:: bash
 
-	centos@ip-172-30-2-111.us-west-2.compute.internal:~/firesim-new/deploy$ firesim infrasetup
-	FireSim Manager. Docs: http://docs.fires.im
-	Running
+  firesim infrasetup
 
-: infrasetup
+전체 실행의 경우 다음과 같은 출력을 기대할 수 있습니다:
 
-	Building FPGA software driver for FireSim-FireSimQuadRocketConfig-BaseF1Config
-	[172.30.2.174] Executing task 'instance_liveness'
-	[172.30.2.174] Checking if host instance is up...
-	[172.30.2.174] Executing task 'infrasetup_node_wrapper'
-	[172.30.2.174] Copying FPGA simulation infrastructure for slot: 0.
-	[172.30.2.174] Installing AWS FPGA SDK on remote nodes.
-	[172.30.2.174] Unloading XDMA/EDMA/XOCL Driver Kernel Module.
-	[172.30.2.174] Copying AWS FPGA XDMA driver to remote node.
-	[172.30.2.174] Loading XDMA Driver Kernel Module.
-	[172.30.2.174] Clearing FPGA Slot 0.
-	[172.30.2.174] Flashing FPGA Slot: 0 with agfi: agfi-0eaa90f6bb893c0f7.
-	[172.30.2.174] Unloading XDMA/EDMA/XOCL Driver Kernel Module.
-	[172.30.2.174] Loading XDMA Driver Kernel Module.
-	The full log of this run is:
-	/home/centos/firesim-new/deploy/logs/2018-05-19--00-32-02-infrasetup-9DJJCX29PF4GAIVL.log
+.. code-block:: bash
+
+  centos@ip-172-30-2-111.us-west-2.compute.internal:~/firesim-new/deploy$ firesim infrasetup
+  FireSim Manager. Docs: http://docs.fires.im
+  Running: infrasetup
+  
+  Building FPGA software driver for FireSim-FireSimQuadRocketConfig-BaseF1Config
+  [172.30.2.174] Executing task 'instance_liveness'
+  [172.30.2.174] Checking if host instance is up...
+  [172.30.2.174] Executing task 'infrasetup_node_wrapper'
+  [172.30.2.174] Copying FPGA simulation infrastructure for slot: 0.
+  [172.30.2.174] Installing AWS FPGA SDK on remote nodes.
+  [172.30.2.174] Unloading XDMA/EDMA/XOCL Driver Kernel Module.
+  [172.30.2.174] Copying AWS FPGA XDMA driver to remote node.
+  [172.30.2.174] Loading XDMA Driver Kernel Module.
+  [172.30.2.174] Clearing FPGA Slot 0.
+  [172.30.2.174] Flashing FPGA Slot: 0 with agfi: agfi-0eaa90f6bb893c0f7.
+  [172.30.2.174] Unloading XDMA/EDMA/XOCL Driver Kernel Module.
+  [172.30.2.174] Loading XDMA Driver Kernel Module.
+  The full log of this run is:
+  /home/centos/firesim-new/deploy/logs/2018-05-19--00-32-02-infrasetup-9DJJCX29PF4GAIVL.log
 
 이 작업들 중 많은 부분이 몇 분 정도 소요될 것입니다. 특히 리포지토리의 클린 복사본의 경우. 여기의 콘솔 출력은 "사용자 친화적"인 버전의 출력입니다. 진행 상황을 자세히 보고 싶다면 ``firesim/deploy/logs/`` 에서 최신 로그 파일을 ``tail -f`` 로 확인하십시오.
 
@@ -209,7 +208,8 @@ Running the simulation
 	1/1 simulations are still running.
 	--------------------------------------------------------------------------------
 
-이 명령은 시뮬레이션된 모든 노드가 종료될 때까지 종료되지 않습니다. 시뮬레이션을 실행하고 관리자 인스턴스에 새로운 ssh 연결을 열어 봅시다. 그런 다음, 다시 firesim 디렉토리로 이동하고 ``sourceme-manager.sh``를 다시 소스하여 ssh 키를 설정합니다. 시뮬레이션된 시스템에 액세스하려면, **관리자 인스턴스에서** 상태 페이지에 출력된 IP 주소로 ssh를 실행합니다. 위의 출력에서 시뮬레이션된 시스템이 ``172.30.2.174`` IP를 가진 인스턴스에서 실행 중임을 알 수 있습니다. 따라서 다음 명령을 실행합니다:
+이 명령은 시뮬레이션된 모든 노드가 종료될 때까지 종료되지 않습니다. 시뮬레이션을 실행하고 관리자 인스턴스에 새로운 ssh 연결을 열어 봅시다. 그런 다음, 다시 firesim 디렉토리로 이동하고 ``sourceme-manager.sh`` 
+다시 소스하여 ssh 키를 설정합니다. 시뮬레이션된 시스템에 액세스하려면, **관리자 인스턴스에서** 상태 페이지에 출력된 IP 주소로 ssh를 실행합니다. 위의 출력에서 시뮬레이션된 시스템이 ``172.30.2.174`` IP를 가진 인스턴스에서 실행 중임을 알 수 있습니다. 따라서 다음 명령을 실행합니다:
 
 .. code-block:: bash
 
@@ -293,9 +293,7 @@ Running the simulation
 	--------------------------------------------------------------------------------
 	This workload's output is located in:
 	/home/centos/firesim-new/deploy/results-workload/2018-05-19--00-38-52-br-base/
-	This run's log is located in
-
-:
+	This run's log is located in:
 	/home/centos/firesim-new/deploy/logs/2018-05-19--00-38-52-runworkload-JS5IGTV166X169DZ.log
 	This status will update every 10s.
 	--------------------------------------------------------------------------------

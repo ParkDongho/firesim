@@ -13,9 +13,9 @@ Select a region
 Key Setup
 ~~~~~~~~~
 
-자동화를 활성화하려면, ``firesim``이라는 이름의 키를 생성해야 하며, 이를 사용해 모든 인스턴스(Manager Instance, Build Farm, Run Farm)를 시작합니다.
+자동화를 활성화하려면, ``firesim`` 이라는 이름의 키를 생성해야 하며, 이를 사용해 모든 인스턴스(Manager Instance, Build Farm, Run Farm)를 시작합니다.
 
-이를 위해 왼쪽 사이드바의 "Network & Security"에서 "Key Pairs"를 클릭합니다. 안내에 따라 키 이름을 ``firesim``으로 지정하고, 개인 키를 ``firesim.pem``으로 로컬에 저장합니다. 이 키는 로컬 머신에서 모든 인스턴스에 접근하는 데 사용할 수 있습니다. 이후에 이 파일을 매니저 인스턴스에 복사하여 매니저도 이 키를 사용할 수 있도록 할 것입니다.
+이를 위해 왼쪽 사이드바의 "Network & Security"에서 "Key Pairs"를 클릭합니다. 안내에 따라 키 이름을 ``firesim`` 으로 지정하고, 개인 키를 ``firesim.pem`` 으로 로컬에 저장합니다. 이 키는 로컬 머신에서 모든 인스턴스에 접근하는 데 사용할 수 있습니다. 이후에 이 파일을 매니저 인스턴스에 복사하여 매니저도 이 키를 사용할 수 있도록 할 것입니다.
 
 Double Check your EC2 Instance Limits
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -41,7 +41,7 @@ AWS는 인프라 보호를 위해 신규/이용 빈도가 낮은 계정에서 �
 Start a t2.nano instance to run the remaining configuration commands
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-로컬 머신에서 패키지를 설치하는 번거로운 과정을 피하기 위해, 매우 저렴한 ``t2.nano`` 인스턴스를 시작하여 AWS 계정을 FireSim에 맞게 설정하기 위한 일회성 AWS 구성 명령을 실행합니다. 이 지침의 마지막에 ``t2.nano`` 인스턴스를 종료할 것입니다. 이미 로컬 머신에 ``boto3``와 AWS CLI가 설치되어 있는 경우, 이 작업을 로컬에서 수행할 수 있습니다.
+로컬 머신에서 패키지를 설치하는 번거로운 과정을 피하기 위해, 매우 저렴한 ``t2.nano`` 인스턴스를 시작하여 AWS 계정을 FireSim에 맞게 설정하기 위한 일회성 AWS 구성 명령을 실행합니다. 이 지침의 마지막에 ``t2.nano`` 인스턴스를 종료할 것입니다. 이미 로컬 머신에 ``boto3`` 와 AWS CLI가 설치되어 있는 경우, 이 작업을 로컬에서 수행할 수 있습니다.
 
 ``t2.nano`` 를 시작하려면 다음 지침을 따르십시오:
 
@@ -57,7 +57,7 @@ Start a t2.nano instance to run the remaining configuration commands
 Run scripts from the t2.nano
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-``t2.nano``에 SSH로 접속합니다:
+``t2.nano`` 에 SSH로 접속합니다:
 
 .. code-block:: bash
 
@@ -86,7 +86,7 @@ Run scripts from the t2.nano
     aws configure
     [프로그램의 안내에 따르십시오]
 
-프롬프트 내에서 이전에 선택한 것과 동일한 리전(예: ``us-east-1``, ``us-west-2``, ``eu-west-1`` 중 하나)을 지정하고 기본 출력 형식을 ``json`` 으로 설정하십시오. AWS 액세스 키는 AWS 설정의 "Security Credentials" 메뉴에서 생성해야 하며, 이와 관련된 지침은 https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey 에서 확인할 수 있습니다. 생성한 AWS 액세스 키 정보는 매니저 인스턴스를 설정할 때 다시 참조할 수 있도록 안전한 장소에 보관하십시오. ``aws configure`` 명령에 대해 더 알고 싶다면 다음 페이지를 참조하십시오: https://docs.aws.amazon.com/cli/latest/reference/configure/index.html
+프롬프트 내에서 이전에 선택한 것과 동일한 리전(예: ``us-east-1``, ``us-west-2``, ``eu-west-1`` 중 하나)을 지정하고 기본 출력 형식을 ``json`` 으로 설정하십시오. AWS 액세스 키는 AWS 설정의 "Security Credentials" 메뉴에서 생성해야 하며, 이와 관련된 지침은 `Managing access keys <https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey>`__ 에서 확인할 수 있습니다. 생성한 AWS 액세스 키 정보는 매니저 인스턴스를 설정할 때 다시 참조할 수 있도록 안전한 장소에 보관하십시오. ``aws configure`` 명령에 대해 더 알고 싶다면 다음 페이지를 참조하십시오: https://docs.aws.amazon.com/cli/latest/reference/configure/index.html
 
 다시 ``t2.nano`` 인스턴스에서 다음 명령을 실행하십시오:
 
@@ -111,7 +111,7 @@ Run scripts from the t2.nano
     Creating a security group for FireSim...
     Success!
 
-이 명령은 계정에 ``firesim``이라는 이름의 VPC와 ``firesim``이라는 이름의 보안 그룹을 생성합니다.
+이 명령은 계정에 ``firesim`` 이라는 이름의 VPC와 ``firesim`` 이라는 이름의 보안 그룹을 생성합니다.
 
 Terminate the t2.nano
 ~~~~~~~~~~~~~~~~~~~~~
@@ -126,3 +126,5 @@ Subscribe to the AWS FPGA Developer AMI
 `AWS FPGA Developer AMI의 AWS Marketplace 페이지 <https://aws.amazon.com/marketplace/pp/B06VVYBLZZ>`__ 로 이동합니다. FPGA Dev AMI에 가입(무료) 버튼을 클릭하고, EULA를 수락하기 위한 안내를 따릅니다 (인스턴스를 시작하지 마십시오).
 
 이제, 매니저 인스턴스 설정으로 계속 진행하십시오.
+
+

@@ -1,13 +1,8 @@
 Overview
 ========================
 
-When you source ``sourceme-manager.sh`` in your copy of the FireSim repo,
-you get access to a new command, ``firesim``, which is the FireSim simulation
-manager. If you've used tools like Vagrant or Docker, the ``firesim`` program
-is to FireSim what ``vagrant`` and ``docker`` are to Vagrant and Docker
-respectively. In essence, ``firesim`` lets us manage the entire lifecycle
-of FPGA simulations, just like ``vagrant`` and ``docker`` do for VMs and
-containers respectively.
+
+``sourceme-manager.sh`` 를 FireSim 리포지토리에서 소스하면, 새로운 명령어인 ``firesim`` 을 사용할 수 있게 됩니다. 이 ``firesim`` 은 FireSim 시뮬레이션 관리 도구입니다. 만약 Vagrant나 Docker 같은 도구를 사용해본 적이 있다면, ``firesim`` 프로그램은 FireSim에서 Vagrant와 Docker가 각각 Vagrant와 Docker를 위해 하는 역할을 수행한다고 생각하면 됩니다. 즉, ``firesim`` 은 FPGA 시뮬레이션의 전체 라이프사이클을 관리할 수 있게 해줍니다. 마치 ``vagrant`` 와 ``docker`` 가 각각 VM과 컨테이너를 관리하는 것과 같습니다.
 
 "Inputs" to the Manager
 -------------------------

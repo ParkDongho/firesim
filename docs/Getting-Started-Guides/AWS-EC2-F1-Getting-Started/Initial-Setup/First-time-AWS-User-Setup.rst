@@ -8,7 +8,7 @@ First-time AWS User Setup
 Creating an AWS Account
 -----------------------
 
-먼저, AWS 계정이 필요합니다. `aws.amazon.com <https://aws.amazon.com>`__에 접속하여 "Sign Up"을 클릭하여 계정을 생성하십시오. 개인 계정을 생성해야 하며, 신용카드 번호를 입력해야 합니다.
+먼저, AWS 계정이 필요합니다. `aws.amazon.com <https://aws.amazon.com>`__ 에 접속하여 "Sign Up"을 클릭하여 계정을 생성하십시오. 개인 계정을 생성해야 하며, 신용카드 번호를 입력해야 합니다.
 
 .. _limitincrease:
 
@@ -31,7 +31,7 @@ AWS는 인프라를 보호하기 위해 신규/이용 빈도가 낮은 계정에
 
     * 이는 하나의 ``c5.4xlarge`` 매니저 인스턴스와 하나의 ``z1d.2xlarge`` 빌드 팜 인스턴스에 충분합니다.
 
-제한이 부족한 경우, 다음 단계를 따라 제한 증가를 요청하십시오: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-resource-limits.html#request-increase
+제한이 부족한 경우, 다음 단계를 따라 제한 증가를 요청하십시오: `request-increase <https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-resource-limits.html#request-increase>`__
 
 요청 시, 위에서 언급된 두 가지 인스턴스 클래스에 대한 vCPU 제한을 입력하십시오. 이 과정에는 가끔 사람이 개입되므로 가능한 한 빨리 요청을 제출해야 합니다. 이 시점에서 요청에 대한 응답을 기다려야 합니다.
 

@@ -1,7 +1,7 @@
 Manager Tasks
 ========================
 
-This page outlines all of the tasks that the FireSim manager supports.
+이 페이지는 FireSim 매니저가 지원하는 모든 작업을 설명합니다.
 
 .. _firesim-managerinit:
 

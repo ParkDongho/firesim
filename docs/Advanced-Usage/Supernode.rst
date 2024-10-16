@@ -33,7 +33,7 @@ Building Supernode Designs
        new freechips.rocketchip.subsystem.WithExtMemSize((1 << 30) * 8L) ++ // 8 GB
        new FireSimQuadRocketConfig)
 
-다음으로 빌드 레시피를 정의할 때, 슈퍼노드 구성을 사용하는 것을 잊지 마세요. ``DESIGN`` 매개변수는 항상 ``FireSim`` 으로 설정해야 하며, ``TARGET_CONFIG`` 매개변수는 ``chipyard/generators/firechip/src/main/scala/TargetConfigs.scala``에서 정의한 래퍼 구성으로 설정해야 합니다. ``PLATFORM_CONFIG`` 는 일반적인 FireSim 구성과 동일하게 선택할 수 있습니다. 예를 들어:
+다음으로 빌드 레시피를 정의할 때, 슈퍼노드 구성을 사용하는 것을 잊지 마세요. ``DESIGN`` 매개변수는 항상 ``FireSim`` 으로 설정해야 하며, ``TARGET_CONFIG`` 매개변수는 ``chipyard/generators/firechip/src/main/scala/TargetConfigs.scala`` 에서 정의한 래퍼 구성으로 설정해야 합니다. ``PLATFORM_CONFIG`` 는 일반적인 FireSim 구성과 동일하게 선택할 수 있습니다. 예를 들어:
 
 .. code-block:: yaml
 
@@ -42,7 +42,7 @@ Building Supernode Designs
     PLATFORM_CONFIG: BaseF1Config
     deploy_quintuplet: null
 
-현재 DDR3 메모리 모델을 사용하는 4개의 쿼드 코어 RocketChip에 대한 단일 사전 빌드된 AGFI를 제공하고 있습니다. 제공된 샘플을 사용하여 직접 AGFI를 빌드할 수도 있습니다. 중요한 점은 FPGA 타이밍 제약을 충족하기 위해 슈퍼노드 타겟은 낮은 호스트 클럭 주파수가 필요할 수 있습니다. 호스트 클럭 주파수는 ``config_build_recipes.yaml`` 의 ``platform_config_args``(F1을 사용하지 않는 경우 ``PLATFORM_CONFIG`` 에서 설정해야 함)에서 구성할 수 있습니다.
+현재 DDR3 메모리 모델을 사용하는 4개의 쿼드 코어 RocketChip에 대한 단일 사전 빌드된 AGFI를 제공하고 있습니다. 제공된 샘플을 사용하여 직접 AGFI를 빌드할 수도 있습니다. 중요한 점은 FPGA 타이밍 제약을 충족하기 위해 슈퍼노드 타겟은 낮은 호스트 클럭 주파수가 필요할 수 있습니다. 호스트 클럭 주파수는 ``config_build_recipes.yaml`` 의 ``platform_config_args`` (F1을 사용하지 않는 경우 ``PLATFORM_CONFIG`` 에서 설정해야 함)에서 구성할 수 있습니다.
 
 Running Supernode Simulations
 -----------------------------

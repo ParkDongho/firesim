@@ -186,7 +186,8 @@ html_logo = '_static/firesim_logo_small.png'
 htmlhelp_basename = 'FireSimdoc'
 
 html_context = {
-    "version": version
+    "version": version,
+    "source_url_prefix_html": "/home/parkdongho/dev/open-silicon-kr-translation/tools/firesim/1.20.1/en/docs/_build/html/index.html"
 }
 
 # add rst to beginning of each rst source file
@@ -303,3 +304,5 @@ def setup(app):
     # Add roles to simplify github reference generation
     app.add_role('gh-file-ref', gh_file_ref_role)
     app.connect('build-finished', copy_legacy_redirects)
+
+
