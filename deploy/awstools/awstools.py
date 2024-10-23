@@ -108,7 +108,7 @@ def valid_aws_configure_creds() -> bool:
     return True
 
 def get_localhost_instance_info(url_ext: str) -> Optional[str]:
-    """ Obtain latest instance info from instance metadata service. See
+    """Obtain latest instance info from instance metadata service. See
     https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html
     for more info on what can be accessed.
 
@@ -122,15 +122,20 @@ def get_localhost_instance_info(url_ext: str) -> Optional[str]:
     # This takes multiple minutes without a timeout from the CI container. In
     # practice it should resolve nearly instantly on an initialized EC2 instance.
     curl_connection_timeout = 10
-    with settings(ok_ret_codes=[0,28]), hide('everything'):
-        res = local(f"curl -s --connect-timeout {curl_connection_timeout} http://169.254.169.254/latest/{url_ext}", capture=True)
+    with settings(ok_ret_codes=[0, 7, 28]), hide("everything"):
+        res = local(
+            f"curl -s --connect-timeout {curl_connection_timeout} http://169.254.169.254/latest/{url_ext}",
+            capture=True,
+        )
         rootLogger.debug(res.stdout)
         rootLogger.debug(res.stderr)
 
-    if res.return_code == 28:
-        return None
-    else:
+    if res.return_code == 0:
+        rootLogger.debug("AWS Host Detected")
         return res.stdout
+    else:
+        rootLogger.debug("Non-AWS Host Detected")
+        return None
 
 def get_localhost_instance_id() -> Optional[str]:
     """Get current manager instance id, if applicable.
